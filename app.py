@@ -903,7 +903,7 @@ def process_step(dataset_id):
         return jsonify({'error': f'Error processing step: {str(e)}'}), 500
 
 
-@app.route('/api/chat/<dataset_id>', methods=['POST']) # Changed session_id to dataset_id
+@app.route('/api/chat/<dataset_id>', methods=['POST'])
 @login_required
 def chat(dataset_id):
     try:
@@ -1546,4 +1546,4 @@ def internal_server_error(e):
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     debug = os.environ.get('FLASK_ENV') == 'development'
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    app.run(host='0.0.0.0', port=port)
