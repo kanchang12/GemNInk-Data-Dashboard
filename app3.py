@@ -1544,9 +1544,5 @@ def internal_server_error(e):
     return jsonify({'error': 'Internal server error occurred.'}), 500
 
 if __name__ == '__main__':
-    # Ensure required directories exist
-    os.makedirs(os.path.join(app.root_path, 'static', 'dashboards'), exist_ok=True)
-    os.makedirs(os.path.join(app.root_path, 'static', 'charts'), exist_ok=True)
-    
-    # Run the application
-    app.run(debug=True, use_reloader=False, port=5000)
+    port = 5000
+    app.run(host='0.0.0.0', port=port)
