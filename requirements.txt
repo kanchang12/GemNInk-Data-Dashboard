@@ -4,8 +4,8 @@ pandas
 numpy
 werkzeug
 python-dotenv
-google-cloud-aiplatform
-pymongo
+google-cloud-vertexai
+pymongo[srv]
 Flask-Session
 plotly
 scipy
