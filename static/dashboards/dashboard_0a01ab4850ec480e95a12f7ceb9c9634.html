@@ -1,0 +1,399 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>💰 Financial Performance Dashboard</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+                font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                min-height: 100vh;
+                padding: 25px;
+                color: #333;
+            }
+            .header { 
+                text-align: center; 
+                margin-bottom: 40px; 
+                color: white;
+                text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            }
+            .header h1 {
+                font-size: 2.8em;
+                margin-bottom: 15px;
+                font-weight: 800;
+                letter-spacing: -1px;
+            }
+            .header p {
+                font-size: 1.3em;
+                opacity: 0.95;
+                font-weight: 300;
+            }
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 30px;
+                max-width: 1600px;
+                margin: 0 auto;
+            }
+            .dashboard-component {
+                background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+                padding: 30px;
+                border-radius: 25px;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.07);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                border: 1px solid rgba(255,255,255,0.3);
+                backdrop-filter: blur(10px);
+            }
+            .dashboard-component:hover {
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.1);
+            }
+            .dashboard-component h3 {
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 25px;
+                font-size: 1.5em;
+                font-weight: 700;
+                letter-spacing: -0.5px;
+            }
+            .dataframe {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                font-size: 0.95em;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            }
+            .dataframe th, .dataframe td {
+                padding: 15px 18px;
+                text-align: left;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            .dataframe th {
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                color: white;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-size: 0.9em;
+            }
+            .dataframe tr:nth-child(even) {
+                background-color: rgba(102, 126, 234, 0.05);
+            }
+            .dataframe tr:hover {
+                background-color: rgba(102, 126, 234, 0.1);
+                transform: scale(1.01);
+                transition: all 0.2s ease;
+            }
+            .chart-container {
+                width: 100%;
+                height: 480px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                padding: 15px;
+                border-radius: 15px;
+                background: rgba(255,255,255,0.5);
+                backdrop-filter: blur(5px);
+            }
+            .chart-container canvas {
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 12px;
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+            }
+            @media (max-width: 768px) {
+                .dashboard-grid {
+                    grid-template-columns: 1fr;
+                    gap: 25px;
+                    padding: 15px;
+                }
+                .header h1 { font-size: 2.2em; }
+                .chart-container { height: 380px; }
+                .dashboard-component { padding: 20px; }
+            }
+            .template-info {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(255,255,255,0.95);
+                padding: 15px 20px;
+                border-radius: 15px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+                font-size: 0.9em;
+                color: #666;
+                backdrop-filter: blur(10px);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="template-info">
+            Dashboard Template: Financial
+        </div>
+        <div class="header">
+            <h1>💰 Financial Performance Dashboard</h1>
+            <p>Financial metrics with trend analysis, portfolio breakdown, and risk assessment</p>
+        </div>
+        <div class="dashboard-grid">
+    
+                <div class="dashboard-component">
+                    <h3>📊 💰 Financial Performance Dashboard - Key Statistics</h3>
+                    <table class="dataframe dataframe" id="stats-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>year</th>
+      <td>551726.0</td>
+      <td>2010.032366</td>
+      <td>3.934647</td>
+      <td>1992.0</td>
+      <td>2007.0</td>
+      <td>2012.0</td>
+      <td>2013.00</td>
+      <td>2015.0</td>
+    </tr>
+    <tr>
+      <th>condition</th>
+      <td>551726.0</td>
+      <td>30.661333</td>
+      <td>13.208332</td>
+      <td>1.0</td>
+      <td>24.0</td>
+      <td>34.0</td>
+      <td>41.00</td>
+      <td>49.0</td>
+    </tr>
+    <tr>
+      <th>odometer</th>
+      <td>551726.0</td>
+      <td>68078.818464</td>
+      <td>50905.861233</td>
+      <td>1.0</td>
+      <td>28779.0</td>
+      <td>52699.0</td>
+      <td>99194.75</td>
+      <td>275831.0</td>
+    </tr>
+    <tr>
+      <th>mmr</th>
+      <td>551726.0</td>
+      <td>13354.086968</td>
+      <td>8441.318818</td>
+      <td>25.0</td>
+      <td>7100.0</td>
+      <td>12200.0</td>
+      <td>18100.00</td>
+      <td>46200.0</td>
+    </tr>
+    <tr>
+      <th>sellingprice</th>
+      <td>551726.0</td>
+      <td>13196.669581</td>
+      <td>8530.839449</td>
+      <td>1.0</td>
+      <td>6900.0</td>
+      <td>12000.0</td>
+      <td>18000.00</td>
+      <td>45750.0</td>
+    </tr>
+  </tbody>
+</table>
+                </div>
+                
+            <div class="dashboard-component">
+                <h3>💰 Trend: odometer</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-2ecb6585033b477aba787a8376919bd2'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-2ecb6585033b477aba787a8376919bd2').getContext('2d');
+                        var chartConfig = {"type": "line", "data": {"labels": ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5", "Point 6", "Point 7", "Point 8", "Point 9", "Point 10", "Point 11", "Point 12", "Point 13", "Point 14", "Point 15", "Point 16", "Point 17", "Point 18", "Point 19", "Point 20", "Point 21", "Point 22", "Point 23", "Point 24", "Point 25", "Point 26", "Point 27", "Point 28", "Point 29", "Point 30", "Point 31", "Point 32", "Point 33", "Point 34", "Point 35", "Point 36", "Point 37", "Point 38", "Point 39", "Point 40", "Point 41", "Point 42", "Point 43", "Point 44", "Point 45", "Point 46", "Point 47", "Point 48", "Point 49", "Point 50"], "datasets": [{"label": "odometer Progression", "data": [16639.0, 9393.0, 1331.0, 14282.0, 5554.0, 28617.0, 9557.0, 4809.0, 2034.0, 5559.0, 14634.0, 15686.0, 11398.0, 8311.0, 7983.0, 13441.0, 14538.0, 25969.0, 33450.0, 5826.0, 9281.0, 16506.0, 12725.0, 11874.0, 37888.0, 13757.0, 12862.0, 19531.0, 111.0, 9027.0, 9208.0, 11846.0, 38261.0, 12242.0, 40661.0, 9051.0, 13878.0, 10906.0, 10678.0, 4314.0, 5304.0, 10357.0, 6105.0, 7770.0, 5214.0, 9684.0, 31.0, 1608.0, 9914.0, 7879.0], "borderColor": "rgba(255, 0, 150, 0.8)", "backgroundColor": "rgba(255, 0, 150, 0.3)", "borderWidth": 4, "fill": true, "tension": 0.4, "pointBackgroundColor": "rgba(255, 0, 150, 0.8)", "pointBorderColor": "#fff", "pointRadius": 6, "pointHoverRadius": 10}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Trend Analysis: odometer", "font": {"size": 18, "weight": "bold"}}}, "scales": {"x": {"title": {"display": true, "text": "Data Points", "font": {"size": 14}}}, "y": {"title": {"display": true, "text": "odometer", "font": {"size": 14}}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>💰 Area Analysis: odometer</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-768d3dce14bc4843bc22761f5cd7a826'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-768d3dce14bc4843bc22761f5cd7a826').getContext('2d');
+                        var chartConfig = {"type": "line", "data": {"labels": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17", "P18", "P19", "P20", "P21", "P22", "P23", "P24", "P25", "P26", "P27", "P28", "P29", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P37", "P38", "P39", "P40"], "datasets": [{"label": "odometer Area", "data": [16639.0, 9393.0, 1331.0, 14282.0, 5554.0, 28617.0, 9557.0, 4809.0, 2034.0, 5559.0, 14634.0, 15686.0, 11398.0, 8311.0, 7983.0, 13441.0, 14538.0, 25969.0, 33450.0, 5826.0, 9281.0, 16506.0, 12725.0, 11874.0, 37888.0, 13757.0, 12862.0, 19531.0, 111.0, 9027.0, 9208.0, 11846.0, 38261.0, 12242.0, 40661.0, 9051.0, 13878.0, 10906.0, 10678.0, 4314.0], "borderColor": "rgba(0, 255, 255, 0.8)", "backgroundColor": "rgba(0, 255, 255, 0.4)", "borderWidth": 3, "fill": true, "tension": 0.6}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Area Under Curve: odometer", "font": {"size": 18, "weight": "bold"}}}, "scales": {"x": {"title": {"display": true, "text": "Points", "font": {"size": 14}}}, "y": {"title": {"display": true, "text": "odometer", "font": {"size": 14}}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>💰 Quick View: make</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-b9e22a798ba446c191bf57842f05b823'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-b9e22a798ba446c191bf57842f05b823').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["Ford", "Chevrolet", "Nissan", "Toyota", "Dodge"], "datasets": [{"label": "Count of make", "data": [103030, 59452, 53830, 39574, 30627], "backgroundColor": ["rgba(255, 0, 150, 0.8)", "rgba(0, 255, 255, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(255, 128, 0, 0.8)", "rgba(128, 0, 255, 0.8)"], "borderColor": ["rgba(255, 0, 150, 1.0)", "rgba(0, 255, 255, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(255, 128, 0, 1.0)", "rgba(128, 0, 255, 1.0)"], "borderWidth": 2}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Data Overview: make", "font": {"size": 16, "weight": "bold"}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>💰 Quick View: make</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-5b3f906c6d254dd2b98bc15f885d245a'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-5b3f906c6d254dd2b98bc15f885d245a').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["Ford", "Chevrolet", "Nissan", "Toyota", "Dodge"], "datasets": [{"label": "Count of make", "data": [103030, 59452, 53830, 39574, 30627], "backgroundColor": ["rgba(255, 0, 150, 0.8)", "rgba(0, 255, 255, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(255, 128, 0, 0.8)", "rgba(128, 0, 255, 0.8)"], "borderColor": ["rgba(255, 0, 150, 1.0)", "rgba(0, 255, 255, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(255, 128, 0, 1.0)", "rgba(128, 0, 255, 1.0)"], "borderWidth": 2}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Data Overview: make", "font": {"size": 16, "weight": "bold"}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>💰 Quick View: make</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-81f5f9939eec4b5db5f8c635bfed9e84'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-81f5f9939eec4b5db5f8c635bfed9e84').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["Ford", "Chevrolet", "Nissan", "Toyota", "Dodge"], "datasets": [{"label": "Count of make", "data": [103030, 59452, 53830, 39574, 30627], "backgroundColor": ["rgba(255, 0, 150, 0.8)", "rgba(0, 255, 255, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(255, 128, 0, 0.8)", "rgba(128, 0, 255, 0.8)"], "borderColor": ["rgba(255, 0, 150, 1.0)", "rgba(0, 255, 255, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(255, 128, 0, 1.0)", "rgba(128, 0, 255, 1.0)"], "borderWidth": 2}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Data Overview: make", "font": {"size": 16, "weight": "bold"}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>💰 Quick View: make</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-194e9af6ad654a1eaee8a9ed38cd08aa'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-194e9af6ad654a1eaee8a9ed38cd08aa').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["Ford", "Chevrolet", "Nissan", "Toyota", "Dodge"], "datasets": [{"label": "Count of make", "data": [103030, 59452, 53830, 39574, 30627], "backgroundColor": ["rgba(255, 0, 150, 0.8)", "rgba(0, 255, 255, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(255, 128, 0, 0.8)", "rgba(128, 0, 255, 0.8)"], "borderColor": ["rgba(255, 0, 150, 1.0)", "rgba(0, 255, 255, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(255, 128, 0, 1.0)", "rgba(128, 0, 255, 1.0)"], "borderWidth": 2}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Data Overview: make", "font": {"size": 16, "weight": "bold"}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+        </div>
+        <script>
+            // Add global enhancements
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add smooth scrolling
+                document.documentElement.style.scrollBehavior = 'smooth';
+                
+                // Add loading animation completion
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                    document.body.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        </script>
+        </body>
+        </html>
+        

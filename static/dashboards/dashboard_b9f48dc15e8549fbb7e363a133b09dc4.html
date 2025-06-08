@@ -1,0 +1,498 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>⚙️ Operations Monitoring Dashboard</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+                font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif; 
+                background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+                min-height: 100vh;
+                padding: 25px;
+                color: #333;
+            }
+            .header { 
+                text-align: center; 
+                margin-bottom: 40px; 
+                color: white;
+                text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            }
+            .header h1 {
+                font-size: 2.8em;
+                margin-bottom: 15px;
+                font-weight: 800;
+                letter-spacing: -1px;
+            }
+            .header p {
+                font-size: 1.3em;
+                opacity: 0.95;
+                font-weight: 300;
+            }
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+                gap: 30px;
+                max-width: 1600px;
+                margin: 0 auto;
+            }
+            .dashboard-component {
+                background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+                padding: 30px;
+                border-radius: 25px;
+                box-shadow: 0 15px 35px rgba(0,0,0,0.1), 0 5px 15px rgba(0,0,0,0.07);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                border: 1px solid rgba(255,255,255,0.3);
+                backdrop-filter: blur(10px);
+            }
+            .dashboard-component:hover {
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 10px 25px rgba(0,0,0,0.1);
+            }
+            .dashboard-component h3 {
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin-bottom: 25px;
+                font-size: 1.5em;
+                font-weight: 700;
+                letter-spacing: -0.5px;
+            }
+            .dataframe {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+                font-size: 0.95em;
+                border-radius: 15px;
+                overflow: hidden;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            }
+            .dataframe th, .dataframe td {
+                padding: 15px 18px;
+                text-align: left;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            .dataframe th {
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                color: white;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                font-size: 0.9em;
+            }
+            .dataframe tr:nth-child(even) {
+                background-color: rgba(102, 126, 234, 0.05);
+            }
+            .dataframe tr:hover {
+                background-color: rgba(102, 126, 234, 0.1);
+                transform: scale(1.01);
+                transition: all 0.2s ease;
+            }
+            .chart-container {
+                width: 100%;
+                height: 480px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                padding: 15px;
+                border-radius: 15px;
+                background: rgba(255,255,255,0.5);
+                backdrop-filter: blur(5px);
+            }
+            .chart-container canvas {
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 12px;
+                filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+            }
+            @media (max-width: 768px) {
+                .dashboard-grid {
+                    grid-template-columns: 1fr;
+                    gap: 25px;
+                    padding: 15px;
+                }
+                .header h1 { font-size: 2.2em; }
+                .chart-container { height: 380px; }
+                .dashboard-component { padding: 20px; }
+            }
+            .template-info {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(255,255,255,0.95);
+                padding: 15px 20px;
+                border-radius: 15px;
+                box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+                font-size: 0.9em;
+                color: #666;
+                backdrop-filter: blur(10px);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="template-info">
+            Dashboard Template: Operations
+        </div>
+        <div class="header">
+            <h1>⚙️ Operations Monitoring Dashboard</h1>
+            <p>Real-time operational metrics, efficiency tracking, and performance indicators</p>
+        </div>
+        <div class="dashboard-grid">
+    
+                <div class="dashboard-component">
+                    <h3>📊 ⚙️ Operations Monitoring Dashboard - Key Statistics</h3>
+                    <table class="dataframe dataframe" id="stats-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>year</th>
+      <td>9942.0</td>
+      <td>2.003782e+03</td>
+      <td>13.136894</td>
+      <td>1951.0</td>
+      <td>1.997000e+03</td>
+      <td>2.006000e+03</td>
+      <td>2.013000e+03</td>
+      <td>2024.0</td>
+    </tr>
+    <tr>
+      <th>smttime</th>
+      <td>9942.0</td>
+      <td>1.078065e+03</td>
+      <td>268.960247</td>
+      <td>14.0</td>
+      <td>1.073736e+03</td>
+      <td>1.073736e+03</td>
+      <td>1.073736e+03</td>
+      <td>8040.0</td>
+    </tr>
+    <tr>
+      <th>smtdays</th>
+      <td>9942.0</td>
+      <td>2.068694e+01</td>
+      <td>12.772393</td>
+      <td>0.0</td>
+      <td>1.000000e+01</td>
+      <td>2.000000e+01</td>
+      <td>2.800000e+01</td>
+      <td>70.0</td>
+    </tr>
+    <tr>
+      <th>totdays</th>
+      <td>9942.0</td>
+      <td>2.555117e+01</td>
+      <td>12.536589</td>
+      <td>0.0</td>
+      <td>1.600000e+01</td>
+      <td>2.633738e+01</td>
+      <td>3.200000e+01</td>
+      <td>66.0</td>
+    </tr>
+    <tr>
+      <th>highpoint</th>
+      <td>9942.0</td>
+      <td>7.404508e+03</td>
+      <td>991.501802</td>
+      <td>3500.0</td>
+      <td>6.767750e+03</td>
+      <td>7.246000e+03</td>
+      <td>8.188000e+03</td>
+      <td>8850.0</td>
+    </tr>
+    <tr>
+      <th>camps</th>
+      <td>9942.0</td>
+      <td>2.333635e+00</td>
+      <td>1.481955</td>
+      <td>0.0</td>
+      <td>1.000000e+00</td>
+      <td>2.000000e+00</td>
+      <td>3.000000e+00</td>
+      <td>34.0</td>
+    </tr>
+    <tr>
+      <th>rope</th>
+      <td>9942.0</td>
+      <td>1.777658e+02</td>
+      <td>664.611912</td>
+      <td>0.0</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>8700.0</td>
+    </tr>
+    <tr>
+      <th>totmembers</th>
+      <td>9942.0</td>
+      <td>5.442969e+00</td>
+      <td>4.068708</td>
+      <td>0.0</td>
+      <td>2.000000e+00</td>
+      <td>4.000000e+00</td>
+      <td>8.000000e+00</td>
+      <td>23.0</td>
+    </tr>
+    <tr>
+      <th>smtmembers</th>
+      <td>9942.0</td>
+      <td>1.730336e+00</td>
+      <td>2.194038</td>
+      <td>0.0</td>
+      <td>0.000000e+00</td>
+      <td>1.000000e+00</td>
+      <td>3.000000e+00</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>mdeaths</th>
+      <td>9942.0</td>
+      <td>6.990545e-02</td>
+      <td>0.365279</td>
+      <td>0.0</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>tothired</th>
+      <td>9942.0</td>
+      <td>2.344800e+00</td>
+      <td>2.805251</td>
+      <td>0.0</td>
+      <td>0.000000e+00</td>
+      <td>2.000000e+00</td>
+      <td>3.000000e+00</td>
+      <td>14.0</td>
+    </tr>
+    <tr>
+      <th>smthired</th>
+      <td>9942.0</td>
+      <td>9.575538e-01</td>
+      <td>1.785164</td>
+      <td>0.0</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>1.000000e+00</td>
+      <td>14.0</td>
+    </tr>
+    <tr>
+      <th>hdeaths</th>
+      <td>9942.0</td>
+      <td>2.424060e-02</td>
+      <td>0.246320</td>
+      <td>0.0</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>0.000000e+00</td>
+      <td>11.0</td>
+    </tr>
+    <tr>
+      <th>chksum</th>
+      <td>9942.0</td>
+      <td>2.457480e+06</td>
+      <td>5162.956834</td>
+      <td>2436530.0</td>
+      <td>2.454538e+06</td>
+      <td>2.458682e+06</td>
+      <td>2.461140e+06</td>
+      <td>2466843.0</td>
+    </tr>
+  </tbody>
+</table>
+                </div>
+                
+            <div class="dashboard-component">
+                <h3>⚙️ Quick View: expid</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-07e9fd3abe9e4dc2b9160b683e190fa8'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-07e9fd3abe9e4dc2b9160b683e190fa8').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["YLNG24101", "ANN260101", "ANN269301", "ANN273101", "ANN278301"], "datasets": [{"label": "Count of expid", "data": [1, 1, 1, 1, 1], "backgroundColor": ["rgba(255, 0, 127, 0.8)", "rgba(255, 127, 0, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(127, 255, 0, 0.8)", "rgba(0, 255, 127, 0.8)"], "borderColor": ["rgba(255, 0, 127, 1.0)", "rgba(255, 127, 0, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(127, 255, 0, 1.0)", "rgba(0, 255, 127, 1.0)"], "borderWidth": 2}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Data Overview: expid", "font": {"size": 16, "weight": "bold"}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>⚙️ Trend: tothired</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-0be3a288570644b3b0d8e0c7e6cf4960'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-0be3a288570644b3b0d8e0c7e6cf4960').getContext('2d');
+                        var chartConfig = {"type": "line", "data": {"labels": ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5", "Point 6", "Point 7", "Point 8", "Point 9", "Point 10", "Point 11", "Point 12", "Point 13", "Point 14", "Point 15", "Point 16", "Point 17", "Point 18", "Point 19", "Point 20", "Point 21", "Point 22", "Point 23", "Point 24", "Point 25", "Point 26", "Point 27", "Point 28", "Point 29", "Point 30", "Point 31", "Point 32", "Point 33", "Point 34", "Point 35", "Point 36", "Point 37", "Point 38", "Point 39", "Point 40", "Point 41", "Point 42", "Point 43", "Point 44", "Point 45", "Point 46", "Point 47", "Point 48", "Point 49", "Point 50"], "datasets": [{"label": "tothired Progression", "data": [9, 0, 8, 0, 0, 2, 2, 0, 3, 0, 0, 3, 4, 2, 0, 2, 5, 0, 0, 0, 4, 2, 4, 3, 1, 0, 6, 5, 5, 5, 6, 3, 0, 2, 1, 3, 2, 2, 0, 2, 2, 2, 4, 2, 5, 3, 7, 1, 5, 2], "borderColor": "rgba(255, 0, 127, 0.8)", "backgroundColor": "rgba(255, 0, 127, 0.3)", "borderWidth": 4, "fill": true, "tension": 0.4, "pointBackgroundColor": "rgba(255, 0, 127, 0.8)", "pointBorderColor": "#fff", "pointRadius": 6, "pointHoverRadius": 10}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Trend Analysis: tothired", "font": {"size": 18, "weight": "bold"}}}, "scales": {"x": {"title": {"display": true, "text": "Data Points", "font": {"size": 14}}}, "y": {"title": {"display": true, "text": "tothired", "font": {"size": 14}}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>⚙️ Distribution: termreason</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-b8ec90cf25034931be6296d7ed136523'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-b8ec90cf25034931be6296d7ed136523').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["Success (main peak)", "Bad weather (storms, high winds)", "Bad conditions (deep snow, avalanching, falling ice, or rock)", "Illness, AMS, exhaustion, or frostbite", "Route technically too difficult, lack of experience, strength, or motivation", "Accident (death or serious injury)", "Lack (or loss) of supplies, support or equipment", "Other"], "datasets": [{"label": "Count of termreason", "data": [5755, 1253, 1081, 462, 393, 271, 215, 198], "backgroundColor": ["rgba(255, 0, 127, 0.8)", "rgba(255, 127, 0, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(127, 255, 0, 0.8)", "rgba(0, 255, 127, 0.8)", "rgba(0, 127, 255, 0.8)", "rgba(127, 0, 255, 0.8)", "rgba(255, 0, 255, 0.8)"], "borderColor": ["rgba(255, 0, 127, 1.0)", "rgba(255, 127, 0, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(127, 255, 0, 1.0)", "rgba(0, 255, 127, 1.0)", "rgba(0, 127, 255, 1.0)", "rgba(127, 0, 255, 1.0)", "rgba(255, 0, 255, 1.0)"], "borderWidth": 3, "borderRadius": 10, "borderSkipped": false}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Category Analysis: termreason", "font": {"size": 18, "weight": "bold"}}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "termreason", "font": {"size": 14}}}, "y": {"title": {"display": true, "text": "Count", "font": {"size": 14}}, "beginAtZero": true}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>⚙️ Area Analysis: highpoint</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-02f421b596b14b7ba02302d0d5c212b2'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-02f421b596b14b7ba02302d0d5c212b2').getContext('2d');
+                        var chartConfig = {"type": "line", "data": {"labels": ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17", "P18", "P19", "P20", "P21", "P22", "P23", "P24", "P25", "P26", "P27", "P28", "P29", "P30", "P31", "P32", "P33", "P34", "P35", "P36", "P37", "P38", "P39", "P40"], "datasets": [{"label": "highpoint Area", "data": [7937, 7937, 7937, 7000, 7160, 7000, 7250, 6400, 7400, 7350, 7450, 7937, 7300, 5950, 6000, 5100, 7020, 7000, 7250, 7500, 7200, 7525, 7525, 7525, 7525, 7525, 7525, 7525, 7525, 6900, 7525, 7525, 7300, 7525, 7525, 7525, 6400, 6800, 5000, 7525], "borderColor": "rgba(255, 127, 0, 0.8)", "backgroundColor": "rgba(255, 127, 0, 0.4)", "borderWidth": 3, "fill": true, "tension": 0.6}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Area Under Curve: highpoint", "font": {"size": 18, "weight": "bold"}}}, "scales": {"x": {"title": {"display": true, "text": "Points", "font": {"size": 14}}}, "y": {"title": {"display": true, "text": "highpoint", "font": {"size": 14}}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>⚙️ Multi-Dimensional Profile</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-d279798beb9448af965b3966e1761bde'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-d279798beb9448af965b3966e1761bde').getContext('2d');
+                        var chartConfig = {"type": "radar", "data": {"labels": ["smthired", "totmembers", "highpoint", "hdeaths", "camps", "smtdays"], "datasets": [{"label": "Average Values", "data": [0.9575538121102394, 5.442969221484611, 7404.507644337155, 0.02424059545363106, 2.3336350834842086, 20.68694185764561], "backgroundColor": "rgba(255, 0, 127, 0.3)", "borderColor": "rgba(255, 0, 127, 0.8)", "borderWidth": 4, "pointBackgroundColor": "rgba(255, 0, 127, 0.8)", "pointBorderColor": "#fff", "pointRadius": 8, "pointHoverRadius": 12}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Feature Profile Analysis", "font": {"size": 18, "weight": "bold"}}}, "scales": {"r": {"beginAtZero": true, "grid": {"color": "rgba(255, 255, 255, 0.2)"}, "pointLabels": {"font": {"size": 12}}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>⚙️ Polar View: approach</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-87919d1c6b1a4d67973ea9cd829e4861'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-87919d1c6b1a4d67973ea9cd829e4861').getContext('2d');
+                        var chartConfig = {"type": "polarArea", "data": {"labels": ["Zhangmu->Nyalam->Tingri", "KTM->Tingri->BC", "Pangboche", "Kodari->Tingri->BC", "Lukla->Namche->Pangboche->Everest BC", "Lhasa->Tingri", "Khumbu Valley", "Kodari->Tingri"], "datasets": [{"data": [5129, 128, 124, 110, 100, 73, 70, 62], "backgroundColor": ["rgba(255, 0, 127, 0.8)", "rgba(255, 127, 0, 0.8)", "rgba(255, 255, 0, 0.8)", "rgba(127, 255, 0, 0.8)", "rgba(0, 255, 127, 0.8)", "rgba(0, 127, 255, 0.8)", "rgba(127, 0, 255, 0.8)", "rgba(255, 0, 255, 0.8)"], "borderColor": ["rgba(255, 0, 127, 1.0)", "rgba(255, 127, 0, 1.0)", "rgba(255, 255, 0, 1.0)", "rgba(127, 255, 0, 1.0)", "rgba(0, 255, 127, 1.0)", "rgba(0, 127, 255, 1.0)", "rgba(127, 0, 255, 1.0)", "rgba(255, 0, 255, 1.0)"], "borderWidth": 3}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Polar Analysis: approach", "font": {"size": 18, "weight": "bold"}}}}};
+                        
+                        // Add animation and interaction enhancements
+                        chartConfig.options.animation = {
+                            duration: 2000,
+                            easing: 'easeInOutQuart'
+                        };
+                        
+                        chartConfig.options.interaction = {
+                            intersect: false,
+                            mode: 'index'
+                        };
+                        
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+        </div>
+        <script>
+            // Add global enhancements
+            document.addEventListener('DOMContentLoaded', function() {
+                // Add smooth scrolling
+                document.documentElement.style.scrollBehavior = 'smooth';
+                
+                // Add loading animation completion
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                    document.body.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        </script>
+        </body>
+        </html>
+        

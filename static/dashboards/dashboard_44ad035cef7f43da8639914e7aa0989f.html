@@ -1,0 +1,494 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard</title>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <style>
+            body { font-family: 'Arial', sans-serif; margin: 0; padding: 20px; background-color: #f4f7f6; color: #333; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .dashboard-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); /* Responsive grid */
+                gap: 20px;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            }
+            .dashboard-component {
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+            .dashboard-component h3 {
+                color: #0056b3;
+                margin-top: 0;
+                margin-bottom: 15px;
+            }
+            .dataframe {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 15px;
+                font-size: 0.9em;
+            }
+            .dataframe th, .dataframe td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .dataframe th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }
+            .chart-container {
+                width: 100%;
+                height: 400px; /* Fixed height for charts */
+                display: flex; /* Use flexbox to center canvas */
+                justify-content: center;
+                align-items: center;
+            }
+            .chart-container canvas {
+                max-width: 100%;
+                max-height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Generic Data Overview</h1>
+            <p>An overview of numerical and categorical data distributions and key statistics using Chart.js.</p>
+        </div>
+        <div class="dashboard-grid">
+    
+                <div class="dashboard-component">
+                    <h3>Overall Statistics</h3>
+                    <table class="dataframe dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Student_ID</th>
+      <td>500.0</td>
+      <td>250.50000</td>
+      <td>144.481833</td>
+      <td>1.00</td>
+      <td>125.7500</td>
+      <td>250.500</td>
+      <td>375.2500</td>
+      <td>500.00</td>
+    </tr>
+    <tr>
+      <th>Age</th>
+      <td>500.0</td>
+      <td>21.53600</td>
+      <td>2.333150</td>
+      <td>18.00</td>
+      <td>20.0000</td>
+      <td>21.000</td>
+      <td>24.0000</td>
+      <td>25.00</td>
+    </tr>
+    <tr>
+      <th>Sleep_Duration</th>
+      <td>500.0</td>
+      <td>6.47240</td>
+      <td>1.485764</td>
+      <td>4.00</td>
+      <td>5.1000</td>
+      <td>6.500</td>
+      <td>7.8000</td>
+      <td>9.00</td>
+    </tr>
+    <tr>
+      <th>Study_Hours</th>
+      <td>500.0</td>
+      <td>5.98160</td>
+      <td>3.475725</td>
+      <td>0.10</td>
+      <td>2.9000</td>
+      <td>6.050</td>
+      <td>8.8000</td>
+      <td>12.00</td>
+    </tr>
+    <tr>
+      <th>Screen_Time</th>
+      <td>500.0</td>
+      <td>2.52500</td>
+      <td>0.859414</td>
+      <td>1.00</td>
+      <td>1.8000</td>
+      <td>2.600</td>
+      <td>3.3000</td>
+      <td>4.00</td>
+    </tr>
+    <tr>
+      <th>Caffeine_Intake</th>
+      <td>500.0</td>
+      <td>2.46200</td>
+      <td>1.682325</td>
+      <td>0.00</td>
+      <td>1.0000</td>
+      <td>2.000</td>
+      <td>4.0000</td>
+      <td>5.00</td>
+    </tr>
+    <tr>
+      <th>Physical_Activity</th>
+      <td>500.0</td>
+      <td>62.34200</td>
+      <td>35.191674</td>
+      <td>0.00</td>
+      <td>32.7500</td>
+      <td>62.500</td>
+      <td>93.2500</td>
+      <td>120.00</td>
+    </tr>
+    <tr>
+      <th>Sleep_Quality</th>
+      <td>500.0</td>
+      <td>5.36200</td>
+      <td>2.967249</td>
+      <td>1.00</td>
+      <td>3.0000</td>
+      <td>5.000</td>
+      <td>8.0000</td>
+      <td>10.00</td>
+    </tr>
+    <tr>
+      <th>Weekday_Sleep_Start</th>
+      <td>500.0</td>
+      <td>11.16686</td>
+      <td>5.972352</td>
+      <td>1.08</td>
+      <td>6.0875</td>
+      <td>10.635</td>
+      <td>16.1525</td>
+      <td>21.93</td>
+    </tr>
+    <tr>
+      <th>Weekend_Sleep_Start</th>
+      <td>500.0</td>
+      <td>12.37586</td>
+      <td>5.789611</td>
+      <td>2.05</td>
+      <td>7.2975</td>
+      <td>12.690</td>
+      <td>17.3275</td>
+      <td>22.00</td>
+    </tr>
+    <tr>
+      <th>Weekday_Sleep_End</th>
+      <td>500.0</td>
+      <td>6.92990</td>
+      <td>1.183174</td>
+      <td>5.00</td>
+      <td>5.9000</td>
+      <td>6.885</td>
+      <td>7.9725</td>
+      <td>8.98</td>
+    </tr>
+    <tr>
+      <th>Weekend_Sleep_End</th>
+      <td>500.0</td>
+      <td>8.98810</td>
+      <td>1.111253</td>
+      <td>7.02</td>
+      <td>8.0475</td>
+      <td>9.005</td>
+      <td>9.9250</td>
+      <td>10.99</td>
+    </tr>
+  </tbody>
+</table>
+                </div>
+                
+            <div class="dashboard-component">
+                <h3>Histogram of Student_ID</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-b4de31af581646d48771f8152d2674fd'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-b4de31af581646d48771f8152d2674fd').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["1.00-50.90", "50.90-100.80", "100.80-150.70", "150.70-200.60", "200.60-250.50", "250.50-300.40", "300.40-350.30", "350.30-400.20", "400.20-450.10", "450.10-500.00"], "datasets": [{"label": "Frequency of Student_ID", "data": [50, 50, 50, 50, 50, 50, 50, 50, 50, 50], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Student_ID"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Student_ID"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Age</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-3a33d3887c294d478a5a64e9427fc64f'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-3a33d3887c294d478a5a64e9427fc64f').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["18.00-19.00", "19.00-20.00", "20.00-21.00", "21.00-22.00", "22.00-23.00", "23.00-24.00", "24.00-25.00"], "datasets": [{"label": "Frequency of Age", "data": [71, 46, 64, 76, 51, 62, 130], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Age"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Age"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Sleep_Duration</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-040de93dceb649eebcd5e1d11c32b3b2'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-040de93dceb649eebcd5e1d11c32b3b2').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["4.00-4.50", "4.50-5.00", "5.00-5.50", "5.50-6.00", "6.00-6.50", "6.50-7.00", "7.00-7.50", "7.50-8.00", "8.00-8.50", "8.50-9.00"], "datasets": [{"label": "Frequency of Sleep_Duration", "data": [56, 51, 55, 36, 48, 40, 57, 48, 57, 52], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Sleep_Duration"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Sleep_Duration"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Study_Hours</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-1a3531a906a849f1bcb93c131721adfe'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-1a3531a906a849f1bcb93c131721adfe').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["0.10-1.29", "1.29-2.48", "2.48-3.67", "3.67-4.86", "4.86-6.05", "6.05-7.24", "7.24-8.43", "8.43-9.62", "9.62-10.81", "10.81-12.00"], "datasets": [{"label": "Frequency of Study_Hours", "data": [57, 49, 43, 50, 51, 46, 63, 47, 47, 47], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Study_Hours"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Study_Hours"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Screen_Time</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-116ece0abd2a4fecb7400033ae66044e'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-116ece0abd2a4fecb7400033ae66044e').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["1.00-1.30", "1.30-1.60", "1.60-1.90", "1.90-2.20", "2.20-2.50", "2.50-2.80", "2.80-3.10", "3.10-3.40", "3.40-3.70", "3.70-4.00"], "datasets": [{"label": "Frequency of Screen_Time", "data": [41, 45, 52, 43, 50, 53, 54, 47, 64, 51], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Screen_Time"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Screen_Time"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Caffeine_Intake</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-094c31a004b2463d80aa710242c054dc'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-094c31a004b2463d80aa710242c054dc').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["0.00-1.00", "1.00-2.00", "2.00-3.00", "3.00-4.00", "4.00-5.00"], "datasets": [{"label": "Frequency of Caffeine_Intake", "data": [85, 79, 92, 82, 162], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Caffeine_Intake"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Caffeine_Intake"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Physical_Activity</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-ddfb45e0b7b34835b867cc8a4fd3fde1'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-ddfb45e0b7b34835b867cc8a4fd3fde1').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["0.00-12.00", "12.00-24.00", "24.00-36.00", "36.00-48.00", "48.00-60.00", "60.00-72.00", "72.00-84.00", "84.00-96.00", "96.00-108.00", "108.00-120.00"], "datasets": [{"label": "Frequency of Physical_Activity", "data": [48, 42, 46, 51, 55, 42, 41, 59, 59, 57], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Physical_Activity"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Physical_Activity"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Sleep_Quality</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-d0ebe82f7cda4c478071593b3812c486'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-d0ebe82f7cda4c478071593b3812c486').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["1.00-2.00", "2.00-3.00", "3.00-4.00", "4.00-5.00", "5.00-6.00", "6.00-7.00", "7.00-8.00", "8.00-9.00", "9.00-10.00"], "datasets": [{"label": "Frequency of Sleep_Quality", "data": [66, 46, 54, 46, 41, 57, 45, 40, 105], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Sleep_Quality"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Sleep_Quality"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Weekday_Sleep_Start</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-94726cf15f7b4418a885ef989ca1a5c4'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-94726cf15f7b4418a885ef989ca1a5c4').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["1.08-3.17", "3.17-5.25", "5.25-7.33", "7.33-9.42", "9.42-11.51", "11.51-13.59", "13.59-15.67", "15.67-17.76", "17.76-19.84", "19.84-21.93"], "datasets": [{"label": "Frequency of Weekday_Sleep_Start", "data": [52, 46, 61, 56, 54, 49, 45, 44, 46, 47], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Weekday_Sleep_Start"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Weekday_Sleep_Start"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Weekend_Sleep_Start</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-7e9d4d62247d4031878697843cd70a29'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-7e9d4d62247d4031878697843cd70a29').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["2.05-4.04", "4.04-6.04", "6.04-8.04", "8.04-10.03", "10.03-12.02", "12.02-14.02", "14.02-16.02", "16.02-18.01", "18.01-20.00", "20.00-22.00"], "datasets": [{"label": "Frequency of Weekend_Sleep_Start", "data": [46, 48, 43, 50, 50, 43, 57, 55, 55, 53], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Weekend_Sleep_Start"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Weekend_Sleep_Start"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Weekday_Sleep_End</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-98ecf66c8b7e42fe943b15dcdb08b194'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-98ecf66c8b7e42fe943b15dcdb08b194').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["5.00-5.40", "5.40-5.80", "5.80-6.19", "6.19-6.59", "6.59-6.99", "6.99-7.39", "7.39-7.79", "7.79-8.18", "8.18-8.58", "8.58-8.98"], "datasets": [{"label": "Frequency of Weekday_Sleep_End", "data": [61, 52, 50, 53, 46, 37, 51, 50, 54, 46], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Weekday_Sleep_End"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Weekday_Sleep_End"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Histogram of Weekend_Sleep_End</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-70b71e3c47ed48d788a3596cff2fb7da'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-70b71e3c47ed48d788a3596cff2fb7da').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["7.02-7.42", "7.42-7.81", "7.81-8.21", "8.21-8.61", "8.61-9.00", "9.00-9.40", "9.40-9.80", "9.80-10.20", "10.20-10.59", "10.59-10.99"], "datasets": [{"label": "Frequency of Weekend_Sleep_End", "data": [46, 49, 53, 47, 55, 57, 47, 52, 55, 39], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)", "rgba(153, 102, 255, 0.6)", "rgba(255, 159, 64, 0.6)", "rgba(201, 203, 207, 0.6)", "rgba(192, 75, 75, 0.6)", "rgba(75, 75, 192, 0.6)", "rgba(75, 192, 75, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)", "rgba(153, 102, 255, 1)", "rgba(255, 159, 64, 1)", "rgba(201, 203, 207, 1)", "rgba(192, 75, 75, 1)", "rgba(75, 75, 192, 1)", "rgba(75, 192, 75, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Distribution of Weekend_Sleep_End"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Weekend_Sleep_End"}}, "y": {"title": {"display": true, "text": "Frequency"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Bar Chart of Gender</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-c266fbfab5e2494fa91d3a4ac12e9b10'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-c266fbfab5e2494fa91d3a4ac12e9b10').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["Male", "Female", "Other"], "datasets": [{"label": "Count of Gender", "data": [186, 166, 148], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Count of Gender Categories"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "Gender"}}, "y": {"title": {"display": true, "text": "Count"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Bar Chart of University_Year</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-1b2b8f446a9f4f53a6bd1d0b00458ce9'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-1b2b8f446a9f4f53a6bd1d0b00458ce9').getContext('2d');
+                        var chartConfig = {"type": "bar", "data": {"labels": ["3rd Year", "2nd Year", "1st Year", "4th Year"], "datasets": [{"label": "Count of University_Year", "data": [132, 131, 125, 112], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Count of University_Year Categories"}, "legend": {"display": false}}, "scales": {"x": {"title": {"display": true, "text": "University_Year"}}, "y": {"title": {"display": true, "text": "Count"}, "beginAtZero": true}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Pie Chart of Gender</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-41d03c5685664786b09b11aa4bfe4c22'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-41d03c5685664786b09b11aa4bfe4c22').getContext('2d');
+                        var chartConfig = {"type": "pie", "data": {"labels": ["Male", "Female", "Other"], "datasets": [{"label": "Proportion of Gender", "data": [186, 166, 148], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Proportion of Gender"}, "legend": {"position": "right"}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Pie Chart of University_Year</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-cbb30aca97d042c7a3f3c39a40da37ec'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-cbb30aca97d042c7a3f3c39a40da37ec').getContext('2d');
+                        var chartConfig = {"type": "pie", "data": {"labels": ["3rd Year", "2nd Year", "1st Year", "4th Year"], "datasets": [{"label": "Proportion of University_Year", "data": [132, 131, 125, 112], "backgroundColor": ["rgba(75, 192, 192, 0.6)", "rgba(255, 99, 132, 0.6)", "rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)"], "borderColor": ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)", "rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)"], "borderWidth": 1}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Proportion of University_Year"}, "legend": {"position": "right"}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Scatter Plot: Student_ID vs Age</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-c5faa944cb644988ac97cab6103618df'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-c5faa944cb644988ac97cab6103618df').getContext('2d');
+                        var chartConfig = {"type": "scatter", "data": {"datasets": [{"label": "Age vs Student_ID", "data": [{"x": 1, "y": 24}, {"x": 2, "y": 21}, {"x": 3, "y": 22}, {"x": 4, "y": 24}, {"x": 5, "y": 20}, {"x": 6, "y": 25}, {"x": 7, "y": 22}, {"x": 8, "y": 22}, {"x": 9, "y": 24}, {"x": 10, "y": 19}, {"x": 11, "y": 20}, {"x": 12, "y": 24}, {"x": 13, "y": 20}, {"x": 14, "y": 20}, {"x": 15, "y": 25}, {"x": 16, "y": 22}, {"x": 17, "y": 21}, {"x": 18, "y": 25}, {"x": 19, "y": 25}, {"x": 20, "y": 20}, {"x": 21, "y": 23}, {"x": 22, "y": 22}, {"x": 23, "y": 19}, {"x": 24, "y": 25}, {"x": 25, "y": 21}, {"x": 26, "y": 23}, {"x": 27, "y": 23}, {"x": 28, "y": 19}, {"x": 29, "y": 25}, {"x": 30, "y": 21}, {"x": 31, "y": 22}, {"x": 32, "y": 18}, {"x": 33, "y": 21}, {"x": 34, "y": 19}, {"x": 35, "y": 23}, {"x": 36, "y": 22}, {"x": 37, "y": 21}, {"x": 38, "y": 18}, {"x": 39, "y": 18}, {"x": 40, "y": 20}, {"x": 41, "y": 20}, {"x": 42, "y": 24}, {"x": 43, "y": 19}, {"x": 44, "y": 25}, {"x": 45, "y": 21}, {"x": 46, "y": 21}, {"x": 47, "y": 25}, {"x": 48, "y": 24}, {"x": 49, "y": 23}, {"x": 50, "y": 23}, {"x": 51, "y": 24}, {"x": 52, "y": 23}, {"x": 53, "y": 20}, {"x": 54, "y": 21}, {"x": 55, "y": 24}, {"x": 56, "y": 21}, {"x": 57, "y": 25}, {"x": 58, "y": 18}, {"x": 59, "y": 20}, {"x": 60, "y": 22}, {"x": 61, "y": 20}, {"x": 62, "y": 24}, {"x": 63, "y": 22}, {"x": 64, "y": 18}, {"x": 65, "y": 24}, {"x": 66, "y": 19}, {"x": 67, "y": 21}, {"x": 68, "y": 18}, {"x": 69, "y": 21}, {"x": 70, "y": 23}, {"x": 71, "y": 19}, {"x": 72, "y": 19}, {"x": 73, "y": 18}, {"x": 74, "y": 19}, {"x": 75, "y": 22}, {"x": 76, "y": 19}, {"x": 77, "y": 21}, {"x": 78, "y": 21}, {"x": 79, "y": 24}, {"x": 80, "y": 21}, {"x": 81, "y": 24}, {"x": 82, "y": 21}, {"x": 83, "y": 22}, {"x": 84, "y": 25}, {"x": 85, "y": 24}, {"x": 86, "y": 20}, {"x": 87, "y": 23}, {"x": 88, "y": 18}, {"x": 89, "y": 21}, {"x": 90, "y": 19}, {"x": 91, "y": 25}, {"x": 92, "y": 21}, {"x": 93, "y": 19}, {"x": 94, "y": 23}, {"x": 95, "y": 23}, {"x": 96, "y": 23}, {"x": 97, "y": 19}, {"x": 98, "y": 21}, {"x": 99, "y": 23}, {"x": 100, "y": 22}, {"x": 101, "y": 24}, {"x": 102, "y": 19}, {"x": 103, "y": 19}, {"x": 104, "y": 21}, {"x": 105, "y": 19}, {"x": 106, "y": 19}, {"x": 107, "y": 23}, {"x": 108, "y": 21}, {"x": 109, "y": 23}, {"x": 110, "y": 24}, {"x": 111, "y": 25}, {"x": 112, "y": 24}, {"x": 113, "y": 25}, {"x": 114, "y": 23}, {"x": 115, "y": 24}, {"x": 116, "y": 21}, {"x": 117, "y": 18}, {"x": 118, "y": 23}, {"x": 119, "y": 25}, {"x": 120, "y": 22}, {"x": 121, "y": 25}, {"x": 122, "y": 22}, {"x": 123, "y": 19}, {"x": 124, "y": 24}, {"x": 125, "y": 22}, {"x": 126, "y": 25}, {"x": 127, "y": 19}, {"x": 128, "y": 18}, {"x": 129, "y": 21}, {"x": 130, "y": 21}, {"x": 131, "y": 21}, {"x": 132, "y": 22}, {"x": 133, "y": 18}, {"x": 134, "y": 22}, {"x": 135, "y": 24}, {"x": 136, "y": 22}, {"x": 137, "y": 18}, {"x": 138, "y": 18}, {"x": 139, "y": 24}, {"x": 140, "y": 18}, {"x": 141, "y": 25}, {"x": 142, "y": 18}, {"x": 143, "y": 21}, {"x": 144, "y": 25}, {"x": 145, "y": 25}, {"x": 146, "y": 24}, {"x": 147, "y": 20}, {"x": 148, "y": 20}, {"x": 149, "y": 18}, {"x": 150, "y": 25}, {"x": 151, "y": 20}, {"x": 152, "y": 20}, {"x": 153, "y": 18}, {"x": 154, "y": 20}, {"x": 155, "y": 22}, {"x": 156, "y": 19}, {"x": 157, "y": 24}, {"x": 158, "y": 19}, {"x": 159, "y": 18}, {"x": 160, "y": 21}, {"x": 161, "y": 24}, {"x": 162, "y": 18}, {"x": 163, "y": 25}, {"x": 164, "y": 21}, {"x": 165, "y": 19}, {"x": 166, "y": 18}, {"x": 167, "y": 25}, {"x": 168, "y": 24}, {"x": 169, "y": 24}, {"x": 170, "y": 23}, {"x": 171, "y": 25}, {"x": 172, "y": 22}, {"x": 173, "y": 20}, {"x": 174, "y": 21}, {"x": 175, "y": 25}, {"x": 176, "y": 23}, {"x": 177, "y": 20}, {"x": 178, "y": 20}, {"x": 179, "y": 18}, {"x": 180, "y": 20}, {"x": 181, "y": 22}, {"x": 182, "y": 24}, {"x": 183, "y": 23}, {"x": 184, "y": 20}, {"x": 185, "y": 18}, {"x": 186, "y": 22}, {"x": 187, "y": 19}, {"x": 188, "y": 24}, {"x": 189, "y": 24}, {"x": 190, "y": 23}, {"x": 191, "y": 24}, {"x": 192, "y": 20}, {"x": 193, "y": 18}, {"x": 194, "y": 24}, {"x": 195, "y": 24}, {"x": 196, "y": 19}, {"x": 197, "y": 19}, {"x": 198, "y": 21}, {"x": 199, "y": 22}, {"x": 200, "y": 20}, {"x": 201, "y": 24}, {"x": 202, "y": 25}, {"x": 203, "y": 24}, {"x": 204, "y": 18}, {"x": 205, "y": 21}, {"x": 206, "y": 22}, {"x": 207, "y": 25}, {"x": 208, "y": 21}, {"x": 209, "y": 23}, {"x": 210, "y": 22}, {"x": 211, "y": 24}, {"x": 212, "y": 24}, {"x": 213, "y": 22}, {"x": 214, "y": 24}, {"x": 215, "y": 20}, {"x": 216, "y": 22}, {"x": 217, "y": 21}, {"x": 218, "y": 22}, {"x": 219, "y": 25}, {"x": 220, "y": 24}, {"x": 221, "y": 20}, {"x": 222, "y": 20}, {"x": 223, "y": 23}, {"x": 224, "y": 21}, {"x": 225, "y": 19}, {"x": 226, "y": 19}, {"x": 227, "y": 22}, {"x": 228, "y": 23}, {"x": 229, "y": 18}, {"x": 230, "y": 22}, {"x": 231, "y": 23}, {"x": 232, "y": 21}, {"x": 233, "y": 21}, {"x": 234, "y": 21}, {"x": 235, "y": 21}, {"x": 236, "y": 21}, {"x": 237, "y": 23}, {"x": 238, "y": 23}, {"x": 239, "y": 20}, {"x": 240, "y": 25}, {"x": 241, "y": 19}, {"x": 242, "y": 24}, {"x": 243, "y": 21}, {"x": 244, "y": 18}, {"x": 245, "y": 24}, {"x": 246, "y": 23}, {"x": 247, "y": 18}, {"x": 248, "y": 18}, {"x": 249, "y": 18}, {"x": 250, "y": 20}, {"x": 251, "y": 23}, {"x": 252, "y": 18}, {"x": 253, "y": 21}, {"x": 254, "y": 22}, {"x": 255, "y": 18}, {"x": 256, "y": 20}, {"x": 257, "y": 24}, {"x": 258, "y": 23}, {"x": 259, "y": 25}, {"x": 260, "y": 20}, {"x": 261, "y": 18}, {"x": 262, "y": 23}, {"x": 263, "y": 22}, {"x": 264, "y": 18}, {"x": 265, "y": 20}, {"x": 266, "y": 19}, {"x": 267, "y": 21}, {"x": 268, "y": 25}, {"x": 269, "y": 24}, {"x": 270, "y": 20}, {"x": 271, "y": 23}, {"x": 272, "y": 25}, {"x": 273, "y": 25}, {"x": 274, "y": 25}, {"x": 275, "y": 18}, {"x": 276, "y": 21}, {"x": 277, "y": 18}, {"x": 278, "y": 23}, {"x": 279, "y": 18}, {"x": 280, "y": 19}, {"x": 281, "y": 21}, {"x": 282, "y": 21}, {"x": 283, "y": 23}, {"x": 284, "y": 24}, {"x": 285, "y": 19}, {"x": 286, "y": 20}, {"x": 287, "y": 18}, {"x": 288, "y": 22}, {"x": 289, "y": 18}, {"x": 290, "y": 25}, {"x": 291, "y": 18}, {"x": 292, "y": 20}, {"x": 293, "y": 18}, {"x": 294, "y": 19}, {"x": 295, "y": 19}, {"x": 296, "y": 21}, {"x": 297, "y": 23}, {"x": 298, "y": 24}, {"x": 299, "y": 22}, {"x": 300, "y": 25}, {"x": 301, "y": 18}, {"x": 302, "y": 18}, {"x": 303, "y": 20}, {"x": 304, "y": 23}, {"x": 305, "y": 19}, {"x": 306, "y": 22}, {"x": 307, "y": 21}, {"x": 308, "y": 19}, {"x": 309, "y": 25}, {"x": 310, "y": 23}, {"x": 311, "y": 25}, {"x": 312, "y": 24}, {"x": 313, "y": 21}, {"x": 314, "y": 24}, {"x": 315, "y": 20}, {"x": 316, "y": 25}, {"x": 317, "y": 20}, {"x": 318, "y": 18}, {"x": 319, "y": 24}, {"x": 320, "y": 23}, {"x": 321, "y": 25}, {"x": 322, "y": 22}, {"x": 323, "y": 21}, {"x": 324, "y": 19}, {"x": 325, "y": 23}, {"x": 326, "y": 23}, {"x": 327, "y": 20}, {"x": 328, "y": 24}, {"x": 329, "y": 25}, {"x": 330, "y": 25}, {"x": 331, "y": 18}, {"x": 332, "y": 18}, {"x": 333, "y": 21}, {"x": 334, "y": 20}, {"x": 335, "y": 23}, {"x": 336, "y": 25}, {"x": 337, "y": 22}, {"x": 338, "y": 20}, {"x": 339, "y": 21}, {"x": 340, "y": 21}, {"x": 341, "y": 20}, {"x": 342, "y": 21}, {"x": 343, "y": 20}, {"x": 344, "y": 19}, {"x": 345, "y": 20}, {"x": 346, "y": 24}, {"x": 347, "y": 20}, {"x": 348, "y": 21}, {"x": 349, "y": 25}, {"x": 350, "y": 24}, {"x": 351, "y": 21}, {"x": 352, "y": 18}, {"x": 353, "y": 18}, {"x": 354, "y": 25}, {"x": 355, "y": 25}, {"x": 356, "y": 24}, {"x": 357, "y": 19}, {"x": 358, "y": 25}, {"x": 359, "y": 18}, {"x": 360, "y": 20}, {"x": 361, "y": 21}, {"x": 362, "y": 18}, {"x": 363, "y": 18}, {"x": 364, "y": 19}, {"x": 365, "y": 24}, {"x": 366, "y": 24}, {"x": 367, "y": 23}, {"x": 368, "y": 19}, {"x": 369, "y": 20}, {"x": 370, "y": 24}, {"x": 371, "y": 21}, {"x": 372, "y": 25}, {"x": 373, "y": 19}, {"x": 374, "y": 25}, {"x": 375, "y": 18}, {"x": 376, "y": 21}, {"x": 377, "y": 21}, {"x": 378, "y": 18}, {"x": 379, "y": 19}, {"x": 380, "y": 18}, {"x": 381, "y": 25}, {"x": 382, "y": 23}, {"x": 383, "y": 21}, {"x": 384, "y": 22}, {"x": 385, "y": 22}, {"x": 386, "y": 25}, {"x": 387, "y": 20}, {"x": 388, "y": 24}, {"x": 389, "y": 18}, {"x": 390, "y": 18}, {"x": 391, "y": 20}, {"x": 392, "y": 20}, {"x": 393, "y": 25}, {"x": 394, "y": 25}, {"x": 395, "y": 20}, {"x": 396, "y": 21}, {"x": 397, "y": 25}, {"x": 398, "y": 23}, {"x": 399, "y": 25}, {"x": 400, "y": 18}, {"x": 401, "y": 25}, {"x": 402, "y": 21}, {"x": 403, "y": 20}, {"x": 404, "y": 18}, {"x": 405, "y": 25}, {"x": 406, "y": 21}, {"x": 407, "y": 23}, {"x": 408, "y": 25}, {"x": 409, "y": 21}, {"x": 410, "y": 23}, {"x": 411, "y": 20}, {"x": 412, "y": 25}, {"x": 413, "y": 23}, {"x": 414, "y": 18}, {"x": 415, "y": 20}, {"x": 416, "y": 18}, {"x": 417, "y": 22}, {"x": 418, "y": 19}, {"x": 419, "y": 25}, {"x": 420, "y": 23}, {"x": 421, "y": 19}, {"x": 422, "y": 19}, {"x": 423, "y": 23}, {"x": 424, "y": 20}, {"x": 425, "y": 25}, {"x": 426, "y": 22}, {"x": 427, "y": 18}, {"x": 428, "y": 21}, {"x": 429, "y": 18}, {"x": 430, "y": 21}, {"x": 431, "y": 18}, {"x": 432, "y": 23}, {"x": 433, "y": 22}, {"x": 434, "y": 25}, {"x": 435, "y": 21}, {"x": 436, "y": 25}, {"x": 437, "y": 25}, {"x": 438, "y": 25}, {"x": 439, "y": 24}, {"x": 440, "y": 20}, {"x": 441, "y": 18}, {"x": 442, "y": 25}, {"x": 443, "y": 18}, {"x": 444, "y": 25}, {"x": 445, "y": 21}, {"x": 446, "y": 20}, {"x": 447, "y": 20}, {"x": 448, "y": 23}, {"x": 449, "y": 24}, {"x": 450, "y": 23}, {"x": 451, "y": 23}, {"x": 452, "y": 23}, {"x": 453, "y": 23}, {"x": 454, "y": 23}, {"x": 455, "y": 22}, {"x": 456, "y": 20}, {"x": 457, "y": 23}, {"x": 458, "y": 25}, {"x": 459, "y": 20}, {"x": 460, "y": 20}, {"x": 461, "y": 19}, {"x": 462, "y": 22}, {"x": 463, "y": 23}, {"x": 464, "y": 18}, {"x": 465, "y": 21}, {"x": 466, "y": 24}, {"x": 467, "y": 25}, {"x": 468, "y": 18}, {"x": 469, "y": 22}, {"x": 470, "y": 21}, {"x": 471, "y": 22}, {"x": 472, "y": 25}, {"x": 473, "y": 20}, {"x": 474, "y": 21}, {"x": 475, "y": 20}, {"x": 476, "y": 25}, {"x": 477, "y": 18}, {"x": 478, "y": 25}, {"x": 479, "y": 18}, {"x": 480, "y": 21}, {"x": 481, "y": 21}, {"x": 482, "y": 23}, {"x": 483, "y": 22}, {"x": 484, "y": 23}, {"x": 485, "y": 22}, {"x": 486, "y": 23}, {"x": 487, "y": 20}, {"x": 488, "y": 21}, {"x": 489, "y": 18}, {"x": 490, "y": 22}, {"x": 491, "y": 25}, {"x": 492, "y": 22}, {"x": 493, "y": 18}, {"x": 494, "y": 23}, {"x": 495, "y": 22}, {"x": 496, "y": 24}, {"x": 497, "y": 20}, {"x": 498, "y": 21}, {"x": 499, "y": 18}, {"x": 500, "y": 21}], "backgroundColor": "rgba(75, 192, 192, 0.6)", "borderColor": "rgba(75, 192, 192, 1)", "pointRadius": 3}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Relationship between Student_ID and Age"}}, "scales": {"x": {"title": {"display": true, "text": "Student_ID"}}, "y": {"title": {"display": true, "text": "Age"}, "beginAtZero": false}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Scatter Plot: Student_ID vs Sleep_Duration</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-d374757401ec499796122c555ed0d6de'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-d374757401ec499796122c555ed0d6de').getContext('2d');
+                        var chartConfig = {"type": "scatter", "data": {"datasets": [{"label": "Sleep_Duration vs Student_ID", "data": [{"x": 1, "y": 7.7}, {"x": 2, "y": 6.3}, {"x": 3, "y": 5.1}, {"x": 4, "y": 6.3}, {"x": 5, "y": 4.7}, {"x": 6, "y": 4.9}, {"x": 7, "y": 6.5}, {"x": 8, "y": 6.1}, {"x": 9, "y": 8.6}, {"x": 10, "y": 5.8}, {"x": 11, "y": 6.9}, {"x": 12, "y": 7.2}, {"x": 13, "y": 4.1}, {"x": 14, "y": 7.3}, {"x": 15, "y": 4.9}, {"x": 16, "y": 8.8}, {"x": 17, "y": 4.7}, {"x": 18, "y": 6.1}, {"x": 19, "y": 4.4}, {"x": 20, "y": 9.0}, {"x": 21, "y": 6.5}, {"x": 22, "y": 7.0}, {"x": 23, "y": 4.3}, {"x": 24, "y": 7.7}, {"x": 25, "y": 5.0}, {"x": 26, "y": 8.5}, {"x": 27, "y": 5.0}, {"x": 28, "y": 5.0}, {"x": 29, "y": 4.2}, {"x": 30, "y": 6.4}, {"x": 31, "y": 6.8}, {"x": 32, "y": 4.3}, {"x": 33, "y": 7.9}, {"x": 34, "y": 6.3}, {"x": 35, "y": 6.6}, {"x": 36, "y": 6.2}, {"x": 37, "y": 6.0}, {"x": 38, "y": 6.8}, {"x": 39, "y": 4.8}, {"x": 40, "y": 4.9}, {"x": 41, "y": 8.3}, {"x": 42, "y": 8.7}, {"x": 43, "y": 5.9}, {"x": 44, "y": 5.4}, {"x": 45, "y": 7.2}, {"x": 46, "y": 6.0}, {"x": 47, "y": 4.1}, {"x": 48, "y": 4.8}, {"x": 49, "y": 7.6}, {"x": 50, "y": 7.3}, {"x": 51, "y": 4.1}, {"x": 52, "y": 5.1}, {"x": 53, "y": 5.2}, {"x": 54, "y": 7.4}, {"x": 55, "y": 4.1}, {"x": 56, "y": 4.5}, {"x": 57, "y": 8.0}, {"x": 58, "y": 4.9}, {"x": 59, "y": 7.3}, {"x": 60, "y": 5.2}, {"x": 61, "y": 4.5}, {"x": 62, "y": 5.2}, {"x": 63, "y": 7.6}, {"x": 64, "y": 8.3}, {"x": 65, "y": 8.2}, {"x": 66, "y": 6.0}, {"x": 67, "y": 7.3}, {"x": 68, "y": 5.0}, {"x": 69, "y": 5.5}, {"x": 70, "y": 8.5}, {"x": 71, "y": 4.1}, {"x": 72, "y": 4.4}, {"x": 73, "y": 5.0}, {"x": 74, "y": 4.1}, {"x": 75, "y": 4.9}, {"x": 76, "y": 6.9}, {"x": 77, "y": 6.1}, {"x": 78, "y": 8.5}, {"x": 79, "y": 8.1}, {"x": 80, "y": 5.7}, {"x": 81, "y": 5.3}, {"x": 82, "y": 5.9}, {"x": 83, "y": 7.0}, {"x": 84, "y": 5.3}, {"x": 85, "y": 7.1}, {"x": 86, "y": 6.0}, {"x": 87, "y": 6.8}, {"x": 88, "y": 6.2}, {"x": 89, "y": 5.5}, {"x": 90, "y": 8.7}, {"x": 91, "y": 7.8}, {"x": 92, "y": 4.7}, {"x": 93, "y": 8.3}, {"x": 94, "y": 6.4}, {"x": 95, "y": 8.5}, {"x": 96, "y": 8.0}, {"x": 97, "y": 6.1}, {"x": 98, "y": 4.1}, {"x": 99, "y": 5.3}, {"x": 100, "y": 6.7}, {"x": 101, "y": 7.2}, {"x": 102, "y": 5.3}, {"x": 103, "y": 4.7}, {"x": 104, "y": 8.2}, {"x": 105, "y": 8.9}, {"x": 106, "y": 6.6}, {"x": 107, "y": 4.9}, {"x": 108, "y": 5.4}, {"x": 109, "y": 4.1}, {"x": 110, "y": 8.6}, {"x": 111, "y": 4.6}, {"x": 112, "y": 6.9}, {"x": 113, "y": 5.4}, {"x": 114, "y": 6.8}, {"x": 115, "y": 7.3}, {"x": 116, "y": 8.1}, {"x": 117, "y": 5.0}, {"x": 118, "y": 4.1}, {"x": 119, "y": 4.7}, {"x": 120, "y": 8.5}, {"x": 121, "y": 8.4}, {"x": 122, "y": 7.0}, {"x": 123, "y": 7.0}, {"x": 124, "y": 7.3}, {"x": 125, "y": 4.9}, {"x": 126, "y": 8.6}, {"x": 127, "y": 6.1}, {"x": 128, "y": 5.9}, {"x": 129, "y": 6.6}, {"x": 130, "y": 4.2}, {"x": 131, "y": 4.8}, {"x": 132, "y": 7.7}, {"x": 133, "y": 4.4}, {"x": 134, "y": 7.0}, {"x": 135, "y": 5.2}, {"x": 136, "y": 5.9}, {"x": 137, "y": 5.4}, {"x": 138, "y": 5.8}, {"x": 139, "y": 7.6}, {"x": 140, "y": 5.5}, {"x": 141, "y": 6.8}, {"x": 142, "y": 6.4}, {"x": 143, "y": 7.3}, {"x": 144, "y": 8.7}, {"x": 145, "y": 7.7}, {"x": 146, "y": 5.1}, {"x": 147, "y": 4.2}, {"x": 148, "y": 5.3}, {"x": 149, "y": 7.0}, {"x": 150, "y": 4.3}, {"x": 151, "y": 6.5}, {"x": 152, "y": 7.0}, {"x": 153, "y": 5.7}, {"x": 154, "y": 7.9}, {"x": 155, "y": 4.5}, {"x": 156, "y": 4.4}, {"x": 157, "y": 7.6}, {"x": 158, "y": 6.5}, {"x": 159, "y": 7.4}, {"x": 160, "y": 6.2}, {"x": 161, "y": 5.2}, {"x": 162, "y": 8.1}, {"x": 163, "y": 8.0}, {"x": 164, "y": 7.5}, {"x": 165, "y": 5.4}, {"x": 166, "y": 7.0}, {"x": 167, "y": 5.8}, {"x": 168, "y": 4.5}, {"x": 169, "y": 8.6}, {"x": 170, "y": 4.7}, {"x": 171, "y": 8.8}, {"x": 172, "y": 6.2}, {"x": 173, "y": 4.9}, {"x": 174, "y": 6.7}, {"x": 175, "y": 8.4}, {"x": 176, "y": 7.7}, {"x": 177, "y": 8.0}, {"x": 178, "y": 7.3}, {"x": 179, "y": 7.5}, {"x": 180, "y": 8.2}, {"x": 181, "y": 5.2}, {"x": 182, "y": 6.4}, {"x": 183, "y": 5.1}, {"x": 184, "y": 8.9}, {"x": 185, "y": 8.7}, {"x": 186, "y": 4.2}, {"x": 187, "y": 7.5}, {"x": 188, "y": 8.6}, {"x": 189, "y": 4.9}, {"x": 190, "y": 6.8}, {"x": 191, "y": 8.6}, {"x": 192, "y": 4.2}, {"x": 193, "y": 7.5}, {"x": 194, "y": 5.5}, {"x": 195, "y": 8.6}, {"x": 196, "y": 8.9}, {"x": 197, "y": 8.7}, {"x": 198, "y": 6.4}, {"x": 199, "y": 8.3}, {"x": 200, "y": 8.2}, {"x": 201, "y": 5.6}, {"x": 202, "y": 8.1}, {"x": 203, "y": 4.2}, {"x": 204, "y": 7.0}, {"x": 205, "y": 5.2}, {"x": 206, "y": 4.6}, {"x": 207, "y": 4.4}, {"x": 208, "y": 7.5}, {"x": 209, "y": 5.7}, {"x": 210, "y": 7.6}, {"x": 211, "y": 4.3}, {"x": 212, "y": 5.6}, {"x": 213, "y": 6.7}, {"x": 214, "y": 8.0}, {"x": 215, "y": 5.6}, {"x": 216, "y": 7.1}, {"x": 217, "y": 8.4}, {"x": 218, "y": 7.1}, {"x": 219, "y": 5.2}, {"x": 220, "y": 4.1}, {"x": 221, "y": 8.4}, {"x": 222, "y": 4.1}, {"x": 223, "y": 8.4}, {"x": 224, "y": 6.6}, {"x": 225, "y": 8.7}, {"x": 226, "y": 8.0}, {"x": 227, "y": 9.0}, {"x": 228, "y": 5.8}, {"x": 229, "y": 7.8}, {"x": 230, "y": 6.0}, {"x": 231, "y": 6.4}, {"x": 232, "y": 7.1}, {"x": 233, "y": 8.4}, {"x": 234, "y": 8.9}, {"x": 235, "y": 7.8}, {"x": 236, "y": 6.1}, {"x": 237, "y": 6.1}, {"x": 238, "y": 7.7}, {"x": 239, "y": 5.2}, {"x": 240, "y": 4.6}, {"x": 241, "y": 5.8}, {"x": 242, "y": 5.4}, {"x": 243, "y": 5.5}, {"x": 244, "y": 5.2}, {"x": 245, "y": 4.2}, {"x": 246, "y": 4.1}, {"x": 247, "y": 8.9}, {"x": 248, "y": 6.1}, {"x": 249, "y": 5.9}, {"x": 250, "y": 7.4}, {"x": 251, "y": 5.1}, {"x": 252, "y": 8.7}, {"x": 253, "y": 7.9}, {"x": 254, "y": 4.4}, {"x": 255, "y": 6.1}, {"x": 256, "y": 8.4}, {"x": 257, "y": 8.7}, {"x": 258, "y": 6.3}, {"x": 259, "y": 7.1}, {"x": 260, "y": 4.8}, {"x": 261, "y": 9.0}, {"x": 262, "y": 5.2}, {"x": 263, "y": 8.7}, {"x": 264, "y": 7.2}, {"x": 265, "y": 7.0}, {"x": 266, "y": 6.6}, {"x": 267, "y": 5.2}, {"x": 268, "y": 4.9}, {"x": 269, "y": 5.1}, {"x": 270, "y": 4.9}, {"x": 271, "y": 7.9}, {"x": 272, "y": 5.8}, {"x": 273, "y": 4.3}, {"x": 274, "y": 8.8}, {"x": 275, "y": 8.4}, {"x": 276, "y": 8.6}, {"x": 277, "y": 9.0}, {"x": 278, "y": 4.9}, {"x": 279, "y": 6.0}, {"x": 280, "y": 7.8}, {"x": 281, "y": 7.5}, {"x": 282, "y": 4.8}, {"x": 283, "y": 8.1}, {"x": 284, "y": 5.1}, {"x": 285, "y": 5.1}, {"x": 286, "y": 6.7}, {"x": 287, "y": 7.0}, {"x": 288, "y": 6.9}, {"x": 289, "y": 4.5}, {"x": 290, "y": 8.4}, {"x": 291, "y": 5.3}, {"x": 292, "y": 4.6}, {"x": 293, "y": 8.4}, {"x": 294, "y": 8.8}, {"x": 295, "y": 8.3}, {"x": 296, "y": 8.0}, {"x": 297, "y": 7.3}, {"x": 298, "y": 6.8}, {"x": 299, "y": 4.4}, {"x": 300, "y": 6.0}, {"x": 301, "y": 5.9}, {"x": 302, "y": 5.3}, {"x": 303, "y": 7.6}, {"x": 304, "y": 6.5}, {"x": 305, "y": 4.4}, {"x": 306, "y": 5.1}, {"x": 307, "y": 7.4}, {"x": 308, "y": 4.4}, {"x": 309, "y": 8.3}, {"x": 310, "y": 6.5}, {"x": 311, "y": 6.4}, {"x": 312, "y": 7.0}, {"x": 313, "y": 8.1}, {"x": 314, "y": 5.7}, {"x": 315, "y": 7.4}, {"x": 316, "y": 6.8}, {"x": 317, "y": 5.3}, {"x": 318, "y": 8.4}, {"x": 319, "y": 8.0}, {"x": 320, "y": 7.3}, {"x": 321, "y": 8.3}, {"x": 322, "y": 8.3}, {"x": 323, "y": 7.5}, {"x": 324, "y": 8.2}, {"x": 325, "y": 7.5}, {"x": 326, "y": 7.4}, {"x": 327, "y": 7.1}, {"x": 328, "y": 7.8}, {"x": 329, "y": 4.8}, {"x": 330, "y": 8.4}, {"x": 331, "y": 8.4}, {"x": 332, "y": 4.1}, {"x": 333, "y": 8.1}, {"x": 334, "y": 4.6}, {"x": 335, "y": 5.7}, {"x": 336, "y": 7.7}, {"x": 337, "y": 4.8}, {"x": 338, "y": 8.1}, {"x": 339, "y": 8.2}, {"x": 340, "y": 6.5}, {"x": 341, "y": 4.0}, {"x": 342, "y": 5.4}, {"x": 343, "y": 7.1}, {"x": 344, "y": 8.9}, {"x": 345, "y": 7.2}, {"x": 346, "y": 5.3}, {"x": 347, "y": 7.2}, {"x": 348, "y": 6.7}, {"x": 349, "y": 7.9}, {"x": 350, "y": 4.5}, {"x": 351, "y": 7.8}, {"x": 352, "y": 6.7}, {"x": 353, "y": 8.8}, {"x": 354, "y": 5.7}, {"x": 355, "y": 7.2}, {"x": 356, "y": 8.7}, {"x": 357, "y": 4.5}, {"x": 358, "y": 8.7}, {"x": 359, "y": 7.4}, {"x": 360, "y": 4.3}, {"x": 361, "y": 5.5}, {"x": 362, "y": 7.5}, {"x": 363, "y": 4.3}, {"x": 364, "y": 6.9}, {"x": 365, "y": 5.7}, {"x": 366, "y": 7.1}, {"x": 367, "y": 4.2}, {"x": 368, "y": 8.4}, {"x": 369, "y": 8.9}, {"x": 370, "y": 8.8}, {"x": 371, "y": 7.7}, {"x": 372, "y": 4.7}, {"x": 373, "y": 7.8}, {"x": 374, "y": 4.1}, {"x": 375, "y": 4.1}, {"x": 376, "y": 5.6}, {"x": 377, "y": 6.4}, {"x": 378, "y": 7.9}, {"x": 379, "y": 7.4}, {"x": 380, "y": 6.2}, {"x": 381, "y": 5.4}, {"x": 382, "y": 9.0}, {"x": 383, "y": 6.1}, {"x": 384, "y": 6.3}, {"x": 385, "y": 4.8}, {"x": 386, "y": 8.0}, {"x": 387, "y": 7.5}, {"x": 388, "y": 5.1}, {"x": 389, "y": 4.4}, {"x": 390, "y": 7.4}, {"x": 391, "y": 7.3}, {"x": 392, "y": 5.4}, {"x": 393, "y": 8.8}, {"x": 394, "y": 4.8}, {"x": 395, "y": 6.2}, {"x": 396, "y": 8.7}, {"x": 397, "y": 6.1}, {"x": 398, "y": 7.2}, {"x": 399, "y": 6.0}, {"x": 400, "y": 5.4}, {"x": 401, "y": 8.9}, {"x": 402, "y": 6.0}, {"x": 403, "y": 8.5}, {"x": 404, "y": 5.1}, {"x": 405, "y": 5.1}, {"x": 406, "y": 4.2}, {"x": 407, "y": 7.3}, {"x": 408, "y": 5.8}, {"x": 409, "y": 8.3}, {"x": 410, "y": 6.4}, {"x": 411, "y": 8.8}, {"x": 412, "y": 4.9}, {"x": 413, "y": 8.3}, {"x": 414, "y": 7.9}, {"x": 415, "y": 7.9}, {"x": 416, "y": 8.2}, {"x": 417, "y": 7.8}, {"x": 418, "y": 7.1}, {"x": 419, "y": 4.7}, {"x": 420, "y": 4.2}, {"x": 421, "y": 8.6}, {"x": 422, "y": 7.1}, {"x": 423, "y": 8.0}, {"x": 424, "y": 6.4}, {"x": 425, "y": 4.6}, {"x": 426, "y": 4.6}, {"x": 427, "y": 7.4}, {"x": 428, "y": 6.2}, {"x": 429, "y": 5.0}, {"x": 430, "y": 6.5}, {"x": 431, "y": 4.3}, {"x": 432, "y": 6.9}, {"x": 433, "y": 5.3}, {"x": 434, "y": 8.0}, {"x": 435, "y": 5.6}, {"x": 436, "y": 6.3}, {"x": 437, "y": 4.1}, {"x": 438, "y": 4.4}, {"x": 439, "y": 6.0}, {"x": 440, "y": 6.4}, {"x": 441, "y": 7.0}, {"x": 442, "y": 5.5}, {"x": 443, "y": 7.5}, {"x": 444, "y": 8.3}, {"x": 445, "y": 7.9}, {"x": 446, "y": 4.2}, {"x": 447, "y": 6.4}, {"x": 448, "y": 4.5}, {"x": 449, "y": 5.2}, {"x": 450, "y": 8.9}, {"x": 451, "y": 4.7}, {"x": 452, "y": 6.5}, {"x": 453, "y": 7.1}, {"x": 454, "y": 7.5}, {"x": 455, "y": 6.8}, {"x": 456, "y": 4.0}, {"x": 457, "y": 5.6}, {"x": 458, "y": 6.6}, {"x": 459, "y": 4.4}, {"x": 460, "y": 5.8}, {"x": 461, "y": 4.2}, {"x": 462, "y": 4.4}, {"x": 463, "y": 6.0}, {"x": 464, "y": 4.7}, {"x": 465, "y": 6.8}, {"x": 466, "y": 7.4}, {"x": 467, "y": 8.0}, {"x": 468, "y": 5.0}, {"x": 469, "y": 4.8}, {"x": 470, "y": 4.5}, {"x": 471, "y": 7.2}, {"x": 472, "y": 7.5}, {"x": 473, "y": 4.2}, {"x": 474, "y": 8.7}, {"x": 475, "y": 4.3}, {"x": 476, "y": 6.7}, {"x": 477, "y": 7.5}, {"x": 478, "y": 8.4}, {"x": 479, "y": 7.6}, {"x": 480, "y": 8.0}, {"x": 481, "y": 5.7}, {"x": 482, "y": 8.1}, {"x": 483, "y": 4.4}, {"x": 484, "y": 8.5}, {"x": 485, "y": 6.7}, {"x": 486, "y": 8.1}, {"x": 487, "y": 6.3}, {"x": 488, "y": 7.2}, {"x": 489, "y": 6.6}, {"x": 490, "y": 7.7}, {"x": 491, "y": 4.4}, {"x": 492, "y": 4.3}, {"x": 493, "y": 5.2}, {"x": 494, "y": 4.8}, {"x": 495, "y": 8.4}, {"x": 496, "y": 5.1}, {"x": 497, "y": 8.9}, {"x": 498, "y": 5.7}, {"x": 499, "y": 4.9}, {"x": 500, "y": 7.9}], "backgroundColor": "rgba(75, 192, 192, 0.6)", "borderColor": "rgba(75, 192, 192, 1)", "pointRadius": 3}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Relationship between Student_ID and Sleep_Duration"}}, "scales": {"x": {"title": {"display": true, "text": "Student_ID"}}, "y": {"title": {"display": true, "text": "Sleep_Duration"}, "beginAtZero": false}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+            <div class="dashboard-component">
+                <h3>Scatter Plot: Age vs Sleep_Duration</h3>
+                <div class='chart-container'>
+                    <canvas id='chart-de23a78359da4f968fe823dedbdecb39'></canvas>
+                </div>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('chart-de23a78359da4f968fe823dedbdecb39').getContext('2d');
+                        var chartConfig = {"type": "scatter", "data": {"datasets": [{"label": "Sleep_Duration vs Age", "data": [{"x": 24, "y": 7.7}, {"x": 21, "y": 6.3}, {"x": 22, "y": 5.1}, {"x": 24, "y": 6.3}, {"x": 20, "y": 4.7}, {"x": 25, "y": 4.9}, {"x": 22, "y": 6.5}, {"x": 22, "y": 6.1}, {"x": 24, "y": 8.6}, {"x": 19, "y": 5.8}, {"x": 20, "y": 6.9}, {"x": 24, "y": 7.2}, {"x": 20, "y": 4.1}, {"x": 20, "y": 7.3}, {"x": 25, "y": 4.9}, {"x": 22, "y": 8.8}, {"x": 21, "y": 4.7}, {"x": 25, "y": 6.1}, {"x": 25, "y": 4.4}, {"x": 20, "y": 9.0}, {"x": 23, "y": 6.5}, {"x": 22, "y": 7.0}, {"x": 19, "y": 4.3}, {"x": 25, "y": 7.7}, {"x": 21, "y": 5.0}, {"x": 23, "y": 8.5}, {"x": 23, "y": 5.0}, {"x": 19, "y": 5.0}, {"x": 25, "y": 4.2}, {"x": 21, "y": 6.4}, {"x": 22, "y": 6.8}, {"x": 18, "y": 4.3}, {"x": 21, "y": 7.9}, {"x": 19, "y": 6.3}, {"x": 23, "y": 6.6}, {"x": 22, "y": 6.2}, {"x": 21, "y": 6.0}, {"x": 18, "y": 6.8}, {"x": 18, "y": 4.8}, {"x": 20, "y": 4.9}, {"x": 20, "y": 8.3}, {"x": 24, "y": 8.7}, {"x": 19, "y": 5.9}, {"x": 25, "y": 5.4}, {"x": 21, "y": 7.2}, {"x": 21, "y": 6.0}, {"x": 25, "y": 4.1}, {"x": 24, "y": 4.8}, {"x": 23, "y": 7.6}, {"x": 23, "y": 7.3}, {"x": 24, "y": 4.1}, {"x": 23, "y": 5.1}, {"x": 20, "y": 5.2}, {"x": 21, "y": 7.4}, {"x": 24, "y": 4.1}, {"x": 21, "y": 4.5}, {"x": 25, "y": 8.0}, {"x": 18, "y": 4.9}, {"x": 20, "y": 7.3}, {"x": 22, "y": 5.2}, {"x": 20, "y": 4.5}, {"x": 24, "y": 5.2}, {"x": 22, "y": 7.6}, {"x": 18, "y": 8.3}, {"x": 24, "y": 8.2}, {"x": 19, "y": 6.0}, {"x": 21, "y": 7.3}, {"x": 18, "y": 5.0}, {"x": 21, "y": 5.5}, {"x": 23, "y": 8.5}, {"x": 19, "y": 4.1}, {"x": 19, "y": 4.4}, {"x": 18, "y": 5.0}, {"x": 19, "y": 4.1}, {"x": 22, "y": 4.9}, {"x": 19, "y": 6.9}, {"x": 21, "y": 6.1}, {"x": 21, "y": 8.5}, {"x": 24, "y": 8.1}, {"x": 21, "y": 5.7}, {"x": 24, "y": 5.3}, {"x": 21, "y": 5.9}, {"x": 22, "y": 7.0}, {"x": 25, "y": 5.3}, {"x": 24, "y": 7.1}, {"x": 20, "y": 6.0}, {"x": 23, "y": 6.8}, {"x": 18, "y": 6.2}, {"x": 21, "y": 5.5}, {"x": 19, "y": 8.7}, {"x": 25, "y": 7.8}, {"x": 21, "y": 4.7}, {"x": 19, "y": 8.3}, {"x": 23, "y": 6.4}, {"x": 23, "y": 8.5}, {"x": 23, "y": 8.0}, {"x": 19, "y": 6.1}, {"x": 21, "y": 4.1}, {"x": 23, "y": 5.3}, {"x": 22, "y": 6.7}, {"x": 24, "y": 7.2}, {"x": 19, "y": 5.3}, {"x": 19, "y": 4.7}, {"x": 21, "y": 8.2}, {"x": 19, "y": 8.9}, {"x": 19, "y": 6.6}, {"x": 23, "y": 4.9}, {"x": 21, "y": 5.4}, {"x": 23, "y": 4.1}, {"x": 24, "y": 8.6}, {"x": 25, "y": 4.6}, {"x": 24, "y": 6.9}, {"x": 25, "y": 5.4}, {"x": 23, "y": 6.8}, {"x": 24, "y": 7.3}, {"x": 21, "y": 8.1}, {"x": 18, "y": 5.0}, {"x": 23, "y": 4.1}, {"x": 25, "y": 4.7}, {"x": 22, "y": 8.5}, {"x": 25, "y": 8.4}, {"x": 22, "y": 7.0}, {"x": 19, "y": 7.0}, {"x": 24, "y": 7.3}, {"x": 22, "y": 4.9}, {"x": 25, "y": 8.6}, {"x": 19, "y": 6.1}, {"x": 18, "y": 5.9}, {"x": 21, "y": 6.6}, {"x": 21, "y": 4.2}, {"x": 21, "y": 4.8}, {"x": 22, "y": 7.7}, {"x": 18, "y": 4.4}, {"x": 22, "y": 7.0}, {"x": 24, "y": 5.2}, {"x": 22, "y": 5.9}, {"x": 18, "y": 5.4}, {"x": 18, "y": 5.8}, {"x": 24, "y": 7.6}, {"x": 18, "y": 5.5}, {"x": 25, "y": 6.8}, {"x": 18, "y": 6.4}, {"x": 21, "y": 7.3}, {"x": 25, "y": 8.7}, {"x": 25, "y": 7.7}, {"x": 24, "y": 5.1}, {"x": 20, "y": 4.2}, {"x": 20, "y": 5.3}, {"x": 18, "y": 7.0}, {"x": 25, "y": 4.3}, {"x": 20, "y": 6.5}, {"x": 20, "y": 7.0}, {"x": 18, "y": 5.7}, {"x": 20, "y": 7.9}, {"x": 22, "y": 4.5}, {"x": 19, "y": 4.4}, {"x": 24, "y": 7.6}, {"x": 19, "y": 6.5}, {"x": 18, "y": 7.4}, {"x": 21, "y": 6.2}, {"x": 24, "y": 5.2}, {"x": 18, "y": 8.1}, {"x": 25, "y": 8.0}, {"x": 21, "y": 7.5}, {"x": 19, "y": 5.4}, {"x": 18, "y": 7.0}, {"x": 25, "y": 5.8}, {"x": 24, "y": 4.5}, {"x": 24, "y": 8.6}, {"x": 23, "y": 4.7}, {"x": 25, "y": 8.8}, {"x": 22, "y": 6.2}, {"x": 20, "y": 4.9}, {"x": 21, "y": 6.7}, {"x": 25, "y": 8.4}, {"x": 23, "y": 7.7}, {"x": 20, "y": 8.0}, {"x": 20, "y": 7.3}, {"x": 18, "y": 7.5}, {"x": 20, "y": 8.2}, {"x": 22, "y": 5.2}, {"x": 24, "y": 6.4}, {"x": 23, "y": 5.1}, {"x": 20, "y": 8.9}, {"x": 18, "y": 8.7}, {"x": 22, "y": 4.2}, {"x": 19, "y": 7.5}, {"x": 24, "y": 8.6}, {"x": 24, "y": 4.9}, {"x": 23, "y": 6.8}, {"x": 24, "y": 8.6}, {"x": 20, "y": 4.2}, {"x": 18, "y": 7.5}, {"x": 24, "y": 5.5}, {"x": 24, "y": 8.6}, {"x": 19, "y": 8.9}, {"x": 19, "y": 8.7}, {"x": 21, "y": 6.4}, {"x": 22, "y": 8.3}, {"x": 20, "y": 8.2}, {"x": 24, "y": 5.6}, {"x": 25, "y": 8.1}, {"x": 24, "y": 4.2}, {"x": 18, "y": 7.0}, {"x": 21, "y": 5.2}, {"x": 22, "y": 4.6}, {"x": 25, "y": 4.4}, {"x": 21, "y": 7.5}, {"x": 23, "y": 5.7}, {"x": 22, "y": 7.6}, {"x": 24, "y": 4.3}, {"x": 24, "y": 5.6}, {"x": 22, "y": 6.7}, {"x": 24, "y": 8.0}, {"x": 20, "y": 5.6}, {"x": 22, "y": 7.1}, {"x": 21, "y": 8.4}, {"x": 22, "y": 7.1}, {"x": 25, "y": 5.2}, {"x": 24, "y": 4.1}, {"x": 20, "y": 8.4}, {"x": 20, "y": 4.1}, {"x": 23, "y": 8.4}, {"x": 21, "y": 6.6}, {"x": 19, "y": 8.7}, {"x": 19, "y": 8.0}, {"x": 22, "y": 9.0}, {"x": 23, "y": 5.8}, {"x": 18, "y": 7.8}, {"x": 22, "y": 6.0}, {"x": 23, "y": 6.4}, {"x": 21, "y": 7.1}, {"x": 21, "y": 8.4}, {"x": 21, "y": 8.9}, {"x": 21, "y": 7.8}, {"x": 21, "y": 6.1}, {"x": 23, "y": 6.1}, {"x": 23, "y": 7.7}, {"x": 20, "y": 5.2}, {"x": 25, "y": 4.6}, {"x": 19, "y": 5.8}, {"x": 24, "y": 5.4}, {"x": 21, "y": 5.5}, {"x": 18, "y": 5.2}, {"x": 24, "y": 4.2}, {"x": 23, "y": 4.1}, {"x": 18, "y": 8.9}, {"x": 18, "y": 6.1}, {"x": 18, "y": 5.9}, {"x": 20, "y": 7.4}, {"x": 23, "y": 5.1}, {"x": 18, "y": 8.7}, {"x": 21, "y": 7.9}, {"x": 22, "y": 4.4}, {"x": 18, "y": 6.1}, {"x": 20, "y": 8.4}, {"x": 24, "y": 8.7}, {"x": 23, "y": 6.3}, {"x": 25, "y": 7.1}, {"x": 20, "y": 4.8}, {"x": 18, "y": 9.0}, {"x": 23, "y": 5.2}, {"x": 22, "y": 8.7}, {"x": 18, "y": 7.2}, {"x": 20, "y": 7.0}, {"x": 19, "y": 6.6}, {"x": 21, "y": 5.2}, {"x": 25, "y": 4.9}, {"x": 24, "y": 5.1}, {"x": 20, "y": 4.9}, {"x": 23, "y": 7.9}, {"x": 25, "y": 5.8}, {"x": 25, "y": 4.3}, {"x": 25, "y": 8.8}, {"x": 18, "y": 8.4}, {"x": 21, "y": 8.6}, {"x": 18, "y": 9.0}, {"x": 23, "y": 4.9}, {"x": 18, "y": 6.0}, {"x": 19, "y": 7.8}, {"x": 21, "y": 7.5}, {"x": 21, "y": 4.8}, {"x": 23, "y": 8.1}, {"x": 24, "y": 5.1}, {"x": 19, "y": 5.1}, {"x": 20, "y": 6.7}, {"x": 18, "y": 7.0}, {"x": 22, "y": 6.9}, {"x": 18, "y": 4.5}, {"x": 25, "y": 8.4}, {"x": 18, "y": 5.3}, {"x": 20, "y": 4.6}, {"x": 18, "y": 8.4}, {"x": 19, "y": 8.8}, {"x": 19, "y": 8.3}, {"x": 21, "y": 8.0}, {"x": 23, "y": 7.3}, {"x": 24, "y": 6.8}, {"x": 22, "y": 4.4}, {"x": 25, "y": 6.0}, {"x": 18, "y": 5.9}, {"x": 18, "y": 5.3}, {"x": 20, "y": 7.6}, {"x": 23, "y": 6.5}, {"x": 19, "y": 4.4}, {"x": 22, "y": 5.1}, {"x": 21, "y": 7.4}, {"x": 19, "y": 4.4}, {"x": 25, "y": 8.3}, {"x": 23, "y": 6.5}, {"x": 25, "y": 6.4}, {"x": 24, "y": 7.0}, {"x": 21, "y": 8.1}, {"x": 24, "y": 5.7}, {"x": 20, "y": 7.4}, {"x": 25, "y": 6.8}, {"x": 20, "y": 5.3}, {"x": 18, "y": 8.4}, {"x": 24, "y": 8.0}, {"x": 23, "y": 7.3}, {"x": 25, "y": 8.3}, {"x": 22, "y": 8.3}, {"x": 21, "y": 7.5}, {"x": 19, "y": 8.2}, {"x": 23, "y": 7.5}, {"x": 23, "y": 7.4}, {"x": 20, "y": 7.1}, {"x": 24, "y": 7.8}, {"x": 25, "y": 4.8}, {"x": 25, "y": 8.4}, {"x": 18, "y": 8.4}, {"x": 18, "y": 4.1}, {"x": 21, "y": 8.1}, {"x": 20, "y": 4.6}, {"x": 23, "y": 5.7}, {"x": 25, "y": 7.7}, {"x": 22, "y": 4.8}, {"x": 20, "y": 8.1}, {"x": 21, "y": 8.2}, {"x": 21, "y": 6.5}, {"x": 20, "y": 4.0}, {"x": 21, "y": 5.4}, {"x": 20, "y": 7.1}, {"x": 19, "y": 8.9}, {"x": 20, "y": 7.2}, {"x": 24, "y": 5.3}, {"x": 20, "y": 7.2}, {"x": 21, "y": 6.7}, {"x": 25, "y": 7.9}, {"x": 24, "y": 4.5}, {"x": 21, "y": 7.8}, {"x": 18, "y": 6.7}, {"x": 18, "y": 8.8}, {"x": 25, "y": 5.7}, {"x": 25, "y": 7.2}, {"x": 24, "y": 8.7}, {"x": 19, "y": 4.5}, {"x": 25, "y": 8.7}, {"x": 18, "y": 7.4}, {"x": 20, "y": 4.3}, {"x": 21, "y": 5.5}, {"x": 18, "y": 7.5}, {"x": 18, "y": 4.3}, {"x": 19, "y": 6.9}, {"x": 24, "y": 5.7}, {"x": 24, "y": 7.1}, {"x": 23, "y": 4.2}, {"x": 19, "y": 8.4}, {"x": 20, "y": 8.9}, {"x": 24, "y": 8.8}, {"x": 21, "y": 7.7}, {"x": 25, "y": 4.7}, {"x": 19, "y": 7.8}, {"x": 25, "y": 4.1}, {"x": 18, "y": 4.1}, {"x": 21, "y": 5.6}, {"x": 21, "y": 6.4}, {"x": 18, "y": 7.9}, {"x": 19, "y": 7.4}, {"x": 18, "y": 6.2}, {"x": 25, "y": 5.4}, {"x": 23, "y": 9.0}, {"x": 21, "y": 6.1}, {"x": 22, "y": 6.3}, {"x": 22, "y": 4.8}, {"x": 25, "y": 8.0}, {"x": 20, "y": 7.5}, {"x": 24, "y": 5.1}, {"x": 18, "y": 4.4}, {"x": 18, "y": 7.4}, {"x": 20, "y": 7.3}, {"x": 20, "y": 5.4}, {"x": 25, "y": 8.8}, {"x": 25, "y": 4.8}, {"x": 20, "y": 6.2}, {"x": 21, "y": 8.7}, {"x": 25, "y": 6.1}, {"x": 23, "y": 7.2}, {"x": 25, "y": 6.0}, {"x": 18, "y": 5.4}, {"x": 25, "y": 8.9}, {"x": 21, "y": 6.0}, {"x": 20, "y": 8.5}, {"x": 18, "y": 5.1}, {"x": 25, "y": 5.1}, {"x": 21, "y": 4.2}, {"x": 23, "y": 7.3}, {"x": 25, "y": 5.8}, {"x": 21, "y": 8.3}, {"x": 23, "y": 6.4}, {"x": 20, "y": 8.8}, {"x": 25, "y": 4.9}, {"x": 23, "y": 8.3}, {"x": 18, "y": 7.9}, {"x": 20, "y": 7.9}, {"x": 18, "y": 8.2}, {"x": 22, "y": 7.8}, {"x": 19, "y": 7.1}, {"x": 25, "y": 4.7}, {"x": 23, "y": 4.2}, {"x": 19, "y": 8.6}, {"x": 19, "y": 7.1}, {"x": 23, "y": 8.0}, {"x": 20, "y": 6.4}, {"x": 25, "y": 4.6}, {"x": 22, "y": 4.6}, {"x": 18, "y": 7.4}, {"x": 21, "y": 6.2}, {"x": 18, "y": 5.0}, {"x": 21, "y": 6.5}, {"x": 18, "y": 4.3}, {"x": 23, "y": 6.9}, {"x": 22, "y": 5.3}, {"x": 25, "y": 8.0}, {"x": 21, "y": 5.6}, {"x": 25, "y": 6.3}, {"x": 25, "y": 4.1}, {"x": 25, "y": 4.4}, {"x": 24, "y": 6.0}, {"x": 20, "y": 6.4}, {"x": 18, "y": 7.0}, {"x": 25, "y": 5.5}, {"x": 18, "y": 7.5}, {"x": 25, "y": 8.3}, {"x": 21, "y": 7.9}, {"x": 20, "y": 4.2}, {"x": 20, "y": 6.4}, {"x": 23, "y": 4.5}, {"x": 24, "y": 5.2}, {"x": 23, "y": 8.9}, {"x": 23, "y": 4.7}, {"x": 23, "y": 6.5}, {"x": 23, "y": 7.1}, {"x": 23, "y": 7.5}, {"x": 22, "y": 6.8}, {"x": 20, "y": 4.0}, {"x": 23, "y": 5.6}, {"x": 25, "y": 6.6}, {"x": 20, "y": 4.4}, {"x": 20, "y": 5.8}, {"x": 19, "y": 4.2}, {"x": 22, "y": 4.4}, {"x": 23, "y": 6.0}, {"x": 18, "y": 4.7}, {"x": 21, "y": 6.8}, {"x": 24, "y": 7.4}, {"x": 25, "y": 8.0}, {"x": 18, "y": 5.0}, {"x": 22, "y": 4.8}, {"x": 21, "y": 4.5}, {"x": 22, "y": 7.2}, {"x": 25, "y": 7.5}, {"x": 20, "y": 4.2}, {"x": 21, "y": 8.7}, {"x": 20, "y": 4.3}, {"x": 25, "y": 6.7}, {"x": 18, "y": 7.5}, {"x": 25, "y": 8.4}, {"x": 18, "y": 7.6}, {"x": 21, "y": 8.0}, {"x": 21, "y": 5.7}, {"x": 23, "y": 8.1}, {"x": 22, "y": 4.4}, {"x": 23, "y": 8.5}, {"x": 22, "y": 6.7}, {"x": 23, "y": 8.1}, {"x": 20, "y": 6.3}, {"x": 21, "y": 7.2}, {"x": 18, "y": 6.6}, {"x": 22, "y": 7.7}, {"x": 25, "y": 4.4}, {"x": 22, "y": 4.3}, {"x": 18, "y": 5.2}, {"x": 23, "y": 4.8}, {"x": 22, "y": 8.4}, {"x": 24, "y": 5.1}, {"x": 20, "y": 8.9}, {"x": 21, "y": 5.7}, {"x": 18, "y": 4.9}, {"x": 21, "y": 7.9}], "backgroundColor": "rgba(75, 192, 192, 0.6)", "borderColor": "rgba(75, 192, 192, 1)", "pointRadius": 3}]}, "options": {"responsive": true, "maintainAspectRatio": false, "plugins": {"title": {"display": true, "text": "Relationship between Age and Sleep_Duration"}}, "scales": {"x": {"title": {"display": true, "text": "Age"}}, "y": {"title": {"display": true, "text": "Sleep_Duration"}, "beginAtZero": false}}}};
+                        new Chart(ctx, chartConfig);
+                    });
+                </script>
+            </div>
+            
+        </div>
+        </body>
+        </html>
+        

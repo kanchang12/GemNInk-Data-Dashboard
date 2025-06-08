@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Intelligence Platform</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #2563eb;
+            color: white;
+            padding: 1rem;
+        }
+        .workflow-nav {
+            background-color: #e5e7eb;
+            padding: 1rem;
+            border-bottom: 1px solid #d1d5db;
+        }
+        .workflow-steps {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .workflow-step {
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            background-color: white;
+            border: none;
+            transition: background-color 0.2s ease;
+        }
+        .workflow-step.active {
+            background-color: #2563eb;
+            color: white;
+        }
+        .workflow-step.completed {
+            background-color: #10b981;
+            color: white;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        .sidebar {
+            width: 300px;
+            background-color: #f9fafb;
+            border-right: 1px solid #e5e7eb;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Allow sidebar content to scroll */
+        }
+        .chat-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            background-color: white;
+            position: relative;
+            overflow: hidden; /* Hide scrollbars if content overflows */
+        }
+        #chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem; /* Space for input */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.8rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .message-bubble.user {
+            background-color: #dbeafe;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.2rem;
+        }
+        .message-bubble.system {
+            background-color: #f3f4f6;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.2rem;
+        }
+        .chat-input-container {
+            display: flex;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            margin-top: auto;
+        }
+        #chat-input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        #chat-form button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        #chat-form button:hover {
+            background-color: #1d4ed8;
+        }
+        .dashboard-view {
+            flex-grow: 1;
+            background-color: #f9fafb;
+            border-left: 1px solid #e5e7eb;
+            padding: 1rem;
+            overflow-y: auto; /* Allow dashboard content to scroll */
+            display: none; /* Hidden by default */
+        }
+        .dashboard-view.active {
+            display: block; /* Show when active */
+        }
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #2563eb;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #complete-step-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1rem;
+            align-self: flex-start; /* Align button to the start of sidebar */
+            transition: background-color 0.2s ease;
+        }
+        #complete-step-btn:hover:not(:disabled) {
+            background-color: #059669;
+        }
+        #complete-step-btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        #upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        #upload-form input[type="file"] {
+            border: 1px solid #d1d5db;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+        }
+        #upload-form button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+        }
+        #upload-form button:hover {
+            background-color: #1d4ed8;
+        }
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .sidebar-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .sidebar-section h3 {
+            margin-bottom: 0.8rem;
+            color: #374151;
+        }
+        #dataset-info {
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+        #dataset-info p {
+            margin-bottom: 0.3rem;
+        }
+        .dashboard-placeholder {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CSV Intelligence Platform</h1>
+    </header>
+    <nav class="workflow-nav">
+        <div class="workflow-steps">
+            <button class="workflow-step" data-step="upload">Upload Data</button>
+            <button class="workflow-step" data-step="cleaning">Data Cleaning</button>
+            <button class="workflow-step" data-step="transformation">Data Transformation</button>
+            <button class="workflow-step" data-step="insight">Insight Generation</button>
+            <button class="workflow-step" data-step="report">Report & Dashboard</button>
+        </div>
+    </nav>
+    <main>
+        <div class="sidebar">
+            <div class="sidebar-section" id="upload-section">
+                <h3>Upload CSV</h3>
+                <form id="upload-form">
+                    <input type="file" id="csv-file-input" accept=".csv">
+                    <button type="submit">Upload Dataset</button>
+                </form>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Dataset Info</h3>
+                <div id="dataset-info">
+                    <p>No dataset uploaded yet.</p>
+                </div>
+            </div>
+
+            <button id="complete-step-btn" style="display: none;">Complete Step</button>
+        </div>
+
+        <div class="chat-container">
+            <div id="chat-messages">
+                <div class="message-bubble system">Hello! Please upload a CSV file to begin.</div>
+            </div>
+            <form id="chat-form" class="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Ask about your data..." disabled>
+                <button type="submit" disabled>Send</button>
+            </form>
+            <div class="loading-indicator" style="display: none;">
+                <div class="spinner"></div>
+                <p>Processing...</p>
+            </div>
+        </div>
+
+        <div class="dashboard-view" id="dashboard-view">
+            <h3>Interactive Dashboard</h3>
+            <div id="dashboard-content" class="dashboard-placeholder">
+                Your dashboard will appear here after report generation.
+            </div>
+        </div>
+    </main>
+
+<script>
+    // State management for the application
+    const state = {
+        activeStep: null,
+        completedSteps: new Set(),
+        datasetId: null,
+        datasetInfo: null,
+        chatHistory: [],
+        insight: null
+    };
+
+    // Global utility function to display messages to the user
+    function displayMessage(message, sender) {
+        const messageContainer = document.getElementById('message-container');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message', sender);
+        messageElement.textContent = message;
+        messageContainer.appendChild(messageElement);
+        messageContainer.scrollTop = messageContainer.scrollHeight; // Auto-scroll to the latest message
+    }
+
+    // Global utility function to display specific sections of the application
+    function displaySection(sectionId) {
+        document.querySelectorAll('.app-section').forEach(section => {
+            section.classList.remove('active');
+        });
+        const activeSection = document.getElementById(sectionId);
+        if (activeSection) {
+            activeSection.classList.add('active');
+        }
+    }
+
+    // Function to update the dataset info display
+    function displayDatasetInfo(info) {
+        state.datasetInfo = info;
+        const datasetInfoDiv = document.getElementById('dataset-info'); // Assuming this div exists
+
+        // Defensive coding: Check if info and info.filename exist before using them
+        if (info && info.filename) {
+            datasetInfoDiv.innerHTML = `
+                <p><strong>File Name:</strong> ${info.filename}</p>
+                <p><strong>Rows:</strong> ${info.rows}</p>
+                <p><strong>Columns:</strong> ${info.columns}</p>
+                <p><strong>Missing Values:</strong> ${info.missing_values}</p>
+                <p><strong>Duplicate Rows:</strong> ${info.duplicate_rows}</p>
+                <p><strong>Data Quality Score:</strong> ${info.data_quality_score ? info.data_quality_score.toFixed(2) : 'N/A'}</p>
+                <h4>Column Information:</h4>
+                <div class="column-info-grid"></div>
+            `;
+
+            // Populate column info dynamically
+            const columnInfoGrid = datasetInfoDiv.querySelector('.column-info-grid');
+            if (info.column_info) {
+                // Clear existing content to prevent duplicates on refresh
+                columnInfoGrid.innerHTML = ''; 
+
+                for (const colName in info.column_info) {
+                    const colData = info.column_info[colName];
+                    const colDiv = document.createElement('div');
+                    colDiv.classList.add('column-card');
+                    colDiv.innerHTML = `
+                        <h5>${colName}</h5>
+                        <p>Dtype: ${colData.dtype}</p>
+                        <p>Unique: ${colData.unique_values}</p>
+                        <p>Missing: ${colData.missing_count} (${colData.missing_percentage ? colData.missing_percentage.toFixed(2) : 0}%)</p>
+                        <p>Subtype: ${colData.subtype}</p>
+                        ${colData.min !== undefined && colData.max !== undefined ? `<p>Range: ${colData.min} - ${colData.max}</p>` : ''}
+                        ${colData.mean !== undefined ? `<p>Mean: ${colData.mean.toFixed(2)}</p>` : ''}
+                        ${colData.std !== undefined ? `<p>Std Dev: ${colData.std.toFixed(2)}</p>` : ''}
+                        ${colData.top_values && typeof colData.top_values === 'object' ? `<p>Top Values: ${Object.entries(colData.top_values).map(([val, count]) => `${val} (${count})`).join(', ')}</p>` : (typeof colData.top_values === 'string' ? `<p>Top Values: ${colData.top_values}</p>` : '')}
+                    `;
+                    columnInfoGrid.appendChild(colDiv);
+                }
+            }
+        } else {
+            // Display a message if info or filename is not available
+            datasetInfoDiv.innerHTML = '<p class="error-message">Dataset information not available or incomplete. Please upload a file and try again.</p>';
+        }
+        displaySection('dataset-info-section'); // Ensure the section is visible
+    }
+
+
+    // Function to get dataset info from backend
+    async function getDatasetInfo(datasetId) {
+        try {
+            displayMessage('Fetching dataset info...', 'system');
+            const response = await fetch(`/api/dataset_info/${datasetId}`);
+            const data = await response.json();
+
+            if (response.ok) {
+                displayDatasetInfo(data.info);
+                displayMessage('Dataset info updated successfully!', 'system');
+            } else {
+                displayMessage(`Error fetching dataset info: ${data.error}`, 'system');
+            }
+        } catch (error) {
+            displayMessage(`Error fetching updated dataset info: ${error.message}`, 'system');
+        }
+    }
+
+    // Function to process file upload
+    async function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            displayMessage('Uploading file...', 'system');
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                state.datasetId = data.dataset_id;
+                displayMessage(`File "${file.name}" uploaded successfully! Dataset ID: ${state.datasetId}`, 'system');
+                
+                // Immediately fetch and display dataset info after successful upload
+                await getDatasetInfo(state.datasetId);
+                selectStep('overview'); // Move to overview step after upload and info display
+            } else {
+                displayMessage(`Failed to upload file: ${data.error}`, 'system');
+            }
+        } catch (error) {
+            displayMessage(`Upload error: ${error.message}`, 'system');
+        }
+    }
+
+    // Function to perform actions based on the current workflow step
+    async function performStepAction(stepId) {
+        displayMessage(`Performing action for step: ${stepId}`, 'system');
+        try {
+            let response;
+            switch (stepId) {
+                case 'overview':
+                    // Overview is usually just displaying info, already handled by getDatasetInfo
+                    displayMessage('Overview complete. Reviewing dataset information.', 'system');
+                    break;
+                case 'quality_check':
+                    response = await fetch(`/api/quality_check/${state.datasetId}`, { method: 'POST' });
+                    break;
+                case 'transformation':
+                    response = await fetch(`/api/transformations/${state.datasetId}`, { method: 'POST' });
+                    break;
+                case 'insight_generation':
+                    response = await fetch(`/api/generate_insight/${state.datasetId}`, { method: 'POST' });
+                    break;
+                case 'visualization':
+                    response = await fetch(`/api/generate_visualization/${state.datasetId}`, { method: 'POST' });
+                    break;
+                default:
+                    displayMessage('No specific action defined for this step.', 'system');
+                    return;
+            }
+
+            if (response && response.ok) {
+                const data = await response.json();
+                displayMessage(`${stepId.replace('_', ' ')} action completed successfully!`, 'system');
+                
+                if (data.insight) {
+                    state.insight = data.insight;
+                    document.getElementById('insight-content').textContent = data.insight;
+                    displaySection('insight-section');
+                }
+                if (data.visualization_html) {
+                    document.getElementById('visualization-content').innerHTML = data.visualization_html;
+                    displaySection('visualization-section');
+                }
+                if (data.message) {
+                    displayMessage(data.message, 'system');
+                }
+                if (data.info) { // If any step returns updated dataset info
+                    displayDatasetInfo(data.info);
+                }
+
+            } else if (response) {
+                const errorData = await response.json();
+                displayMessage(`Error during ${stepId.replace('_', ' ')}: ${errorData.error}`, 'system');
+            }
+        } catch (error) {
+            displayMessage(`An error occurred during ${stepId.replace('_', ' ')}: ${error.message}`, 'system');
+        }
+    }
+
+    // Function to mark a step as complete
+    function completeStep(stepId) {
+        state.completedSteps.add(stepId);
+        const stepElement = document.querySelector(`.workflow-step[data-step="${stepId}"]`);
+        if (stepElement) {
+            stepElement.classList.add('completed');
+        }
+        displayMessage(`Step "${stepId.replace('_', ' ')}" marked as complete.`, 'system');
+    }
+
+    // Function to select and display a workflow step
+    function selectStep(stepId) {
+        state.activeStep = stepId;
+
+        // Update active step visual
+        document.querySelectorAll('.workflow-step').forEach(step => {
+            step.classList.remove('active');
+        });
+        const activeStepElement = document.querySelector(`.workflow-step[data-step="${stepId}"]`);
+        if (activeStepElement) {
+            activeStepElement.classList.add('active');
+        }
+
+        // Display the corresponding section
+        displaySection(`${stepId}-section`);
+
+        displayMessage(`Current step: ${stepId.replace('_', ' ')}`, 'system');
+    }
+
+    // Function to handle chat interactions
+    async function processChat(message) {
+        displayMessage(message, 'user');
+        state.chatHistory.push({ role: 'user', content: message });
+        chatInput.value = ''; // Clear chat input
+
+        try {
+            displayMessage('Thinking...', 'system');
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: message, // Ensure the key is 'message'
+                    chat_history: state.chatHistory,
+                    dataset_id: state.datasetId // Send dataset ID for context
+                })
+            });
+            const data = await response.json();
+
+            if (response.ok) {
+                displayMessage(data.response, 'system');
+                state.chatHistory.push({ role: 'assistant', content: data.response });
+            } else {
+                displayMessage(`Chat error: ${data.error}`, 'system');
+            }
+        } catch (error) {
+            displayMessage(`Chat communication error: ${error.message}`, 'system');
+        }
+    }
+
+    // DOM Elements
+    const uploadForm = document.getElementById('upload-form');
+    const fileInput = document.getElementById('file-input');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const completeStepBtn = document.getElementById('complete-step-btn');
+    const workflowSteps = document.querySelectorAll('.workflow-step');
+
+    // Define the workflow steps
+    const steps = [
+        { id: 'upload', name: 'Upload Data' },
+        { id: 'overview', name: 'Overview' },
+        { id: 'quality_check', name: 'Quality Check' },
+        { id: 'transformation', name: 'Transformation' },
+        { id: 'insight_generation', name: 'Insight Generation' },
+        { id: 'visualization', name: 'Visualization' }
+    ];
+
+    // Event listener for file upload form submission
+    uploadForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (fileInput.files.length > 0) {
+            await uploadFile(fileInput.files[0]);
+        } else {
+            displayMessage('Please select a file to upload.', 'system');
+        }
+    });
+
+    // Event listener for complete step button
+    completeStepBtn.addEventListener('click', async () => {
+        const currentStep = state.activeStep;
+        if (currentStep) {
+            await performStepAction(currentStep);
+            completeStep(currentStep);
+        }
+    });
+
+    // Event listeners for workflow steps
+    workflowSteps.forEach(step => {
+        step.addEventListener('click', () => {
+            const stepId = step.dataset.step;
+            
+            const stepIndex = steps.findIndex(s => s.id === stepId);
+            const currentIndex = steps.findIndex(s => s.id === state.activeStep);
+            
+            // Allow clicking on steps that are completed or the next in sequence
+            if (state.completedSteps.includes(stepId) || stepIndex === currentIndex + 1 || stepIndex <= currentIndex) {
+                selectStep(stepId);
+            }
+        });
+    });
+
+    // Event listener for chat form submission
+    chatForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const message = chatInput.value.trim();
+
+        if (message) {
+            await processChat(message);
+        }
+    });
+
+    // Initialize with the upload step when the page loads
+    selectStep('upload');
+</script>
+</body>
+</html>

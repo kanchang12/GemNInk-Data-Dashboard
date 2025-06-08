@@ -1,0 +1,17 @@
+flask
+flask-session
+pymongo
+google-cloud-aiplatform
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+plotly
+protobuf
+werkzeug
+python-dotenv
+google-genai

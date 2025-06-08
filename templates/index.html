@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Intelligence Platform</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column; /* Stack header and main vertically */
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: #2563eb; /* Blue-700 */
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Workflow Navigation Styling - HIDDEN */
+        .workflow-nav {
+            display: none; /* Hide the workflow navigation */
+        }
+
+        /* Main Content Area Styling - NEW FLEX CONTAINER */
+        .main-container {
+            display: flex; /* Make it a flex container for chat and dashboard */
+            flex: 1; /* Allow it to grow and fill available space */
+            overflow: hidden; /* Hide overflow if content is too large */
+            padding: 1rem; /* Add some padding around the main content */
+            gap: 1rem; /* Space between chat and dashboard */
+        }
+
+        /* Chat Section Styling (Left Column) */
+        .chat-section {
+            flex: 0 0 350px; /* Fixed width for chat, don't grow/shrink */
+            max-width: 350px; /* Ensure it doesn't get too wide */
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden; /* Ensure chat messages don't overflow */
+        }
+
+        .chat-header {
+            background-color: #60a5fa; /* Blue-400 */
+            color: white;
+            padding: 0.75rem 1rem;
+            font-weight: bold;
+            text-align: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .chat-messages {
+            flex: 1; /* Allows message area to grow */
+            padding: 1rem;
+            overflow-y: auto; /* Scroll for messages */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            word-wrap: break-word; /* Ensure long words wrap */
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.6rem 0.9rem;
+            border-radius: 1rem;
+            line-height: 1.4;
+        }
+        .chat-message.user {
+            background-color: #e0f2fe; /* Light blue */
+            align-self: flex-end;
+            border-bottom-right-radius: 0.3rem;
+        }
+        .chat-message.system {
+            background-color: #e5e7eb; /* Light gray */
+            align-self: flex-start;
+            border-bottom-left-radius: 0.3rem;
+        }
+        .chat-message.tool-output {
+            background-color: #fffbe6; /* Light yellow */
+            border: 1px dashed #d9b300;
+            color: #333;
+            font-size: 0.85em;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.3rem;
+        }
+
+
+        .chat-input-form {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+
+        .chat-input-form input[type="text"] {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .chat-input-form button {
+            padding: 0.75rem 1.25rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .chat-input-form button:hover {
+            background-color: #1d4ed8; /* Darker blue */
+        }
+
+        /* Dashboard Container Styling (Right Column) */
+        .dashboard-container {
+            flex: 1; /* Allows dashboard to take remaining space */
+            display: flex;
+            flex-direction: column; /* Stack sections inside dashboard vertically */
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem;
+            overflow-y: auto; /* Enable scrolling for dashboard content */
+        }
+
+        /* Specific section styling for dashboard */
+        .dashboard-section {
+            display: none; /* Hidden by default */
+            padding: 1rem;
+            border-bottom: 1px solid #eee; /* Separator for sections */
+        }
+
+        .dashboard-section.active {
+            display: block; /* Show active section */
+        }
+
+        /* Styles for dataset-info section */
+        #dataset-info h4 {
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2563eb;
+            border-bottom: 2px solid #eff6ff; /* Light blue underline */
+            padding-bottom: 0.5rem;
+        }
+
+        .column-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .column-card {
+            background-color: #f8fafc; /* Lighter background for cards */
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        .column-card:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+        .column-card h5 {
+            color: #1e40af; /* Darker blue for column names */
+            margin-bottom: 0.5rem;
+            font-size: 1.1em;
+            border-bottom: 1px dashed #bfdbfe;
+            padding-bottom: 0.3rem;
+        }
+        .column-card p {
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 0.2em;
+        }
+
+        /* File Upload Specific Styling */
+        #upload-section {
+            text-align: center;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 2rem; /* Center the upload box */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        #upload-section h3 {
+            color: #2563eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-container {
+            border: 2px dashed #93c5fd; /* Light blue dashed border */
+            padding: 2rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .file-upload-container:hover {
+            border-color: #2563eb; /* Darker blue on hover */
+        }
+        .file-upload-container input[type="file"] {
+            display: none; /* Hide default input */
+        }
+        .file-upload-container .upload-icon {
+            font-size: 3rem; /* Large icon */
+            color: #60a5fa; /* Blue-400 */
+        }
+        .file-upload-container .upload-text {
+            color: #4b5563; /* Gray-700 */
+            font-size: 1.1rem;
+        }
+        .file-upload-container button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            margin-top: 1rem;
+        }
+        .file-upload-container button:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* General Utility Styles */
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+            display: block; /* Ensures it's visible if needed */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .message-box {
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        .message-box.success {
+            background-color: #d1fae5; /* Green-100 */
+            color: #065f46; /* Green-800 */
+            border: 1px solid #a7f3d0; /* Green-200 */
+        }
+        .message-box.error {
+            background-color: #fee2e2; /* Red-100 */
+            color: #991b1b; /* Red-800 */
+            border: 1px solid #fecaca; /* Red-200 */
+        }
+        .message-box.info {
+            background-color: #e0f2fe; /* Blue-100 */
+            color: #0c4a6e; /* Blue-800 */
+            border: 1px solid #bfdbfe; /* Blue-200 */
+        }
+        .message-box.warning {
+            background-color: #fffbeb; /* Yellow-100 */
+            color: #9a3412; /* Orange-800 */
+            border: 1px solid #fcd34d; /* Yellow-200 */
+        }
+
+        .error-message {
+            color: #dc2626; /* Red-600 */
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CSV Intelligence Platform</h1>
+    </header>
+
+    <div class="main-container">
+        <div class="chat-section">
+            <div class="chat-header">AI Assistant</div>
+            <div class="chat-messages" id="chat-messages">
+                </div>
+            <form id="chat-input-form" class="chat-input-form">
+                <input type="text" id="chat-input" placeholder="Ask about your data..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
+        </div>
+
+        <div class="dashboard-container" id="dashboard-container">
+            <div id="upload-section" class="dashboard-section active">
+                <h3>Upload Your Data</h3>
+                <div class="file-upload-container" id="file-drop-area">
+                    <input type="file" id="file-input" accept=".csv, .xlsx, .xls, .json, .tsv">
+                    <span class="upload-icon">⬆️</span>
+                    <p class="upload-text">Drag & drop your file here, or click to browse</p>
+                    <button onclick="document.getElementById('file-input').click();">Browse Files</button>
+                </div>
+                <div id="upload-status" class="message-box hidden"></div>
+                <div class="loading-spinner hidden" id="upload-spinner"></div>
+            </div>
+
+            <div id="auto-process-status" class="dashboard-section hidden">
+                <h3>Processing Data...</h3>
+                <p>Please wait while your data is being cleaned, analyzed, and a dashboard is generated.</p>
+                <div class="loading-spinner"></div>
+            </div>
+
+            <div id="dashboard-display-section" class="dashboard-section hidden">
+                <h3>Your Dashboard</h3>
+                <div id="dashboard-content">
+                    <p>Dashboard will be displayed here after processing.</p>
+                </div>
+                <div id="dataset-info">
+                    </div>
+            </div>
+
+            <div id="overview-section" class="dashboard-section hidden"></div>
+            <div id="clean_transform-section" class="dashboard-section hidden"></div>
+            <div id="insights-section" class="dashboard-section hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // State management for active step and completed steps - Simplified
+        const state = {
+            activeStep: 'upload', // Only 'upload', 'processing', 'dashboard' are main states
+            datasetInfo: null,
+            activeDatasetId: null
+        };
+
+        // Simplified step handling - now primarily for showing/hiding sections
+        function displaySection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                if (section.id === sectionId) {
+                    section.classList.remove('hidden');
+                    section.classList.add('active');
+                } else {
+                    section.classList.add('hidden');
+                    section.classList.remove('active');
+                }
+            });
+            state.activeStep = sectionId; // Update the state
+        }
+
+        // Function to display messages in the chat
+        function displayMessage(message, sender = 'user', isToolOutput = false) {
+            const chatMessagesDiv = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('chat-message', sender);
+            if (isToolOutput) {
+                messageElement.classList.add('tool-output');
+                try {
+                    const parsedMessage = JSON.parse(message);
+                    messageElement.textContent = JSON.stringify(parsedMessage, null, 2);
+                } catch (e) {
+                    messageElement.textContent = message;
+                }
+            } else {
+                messageElement.textContent = message;
+            }
+            chatMessagesDiv.appendChild(messageElement);
+            chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+        }
+
+        // Function to show/hide loading spinner
+        function showLoadingSpinner(show) {
+            const spinner = document.getElementById('upload-spinner'); // Re-using this for general loading feedback
+            if (spinner) {
+                if (show) {
+                    spinner.classList.remove('hidden');
+                } else {
+                    spinner.classList.add('hidden');
+                }
+            }
+        }
+
+        // Function to display system/error messages in a designated area
+        function displayStatusMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('upload-status'); // Re-using upload status for general messages
+            if (statusDiv) {
+                statusDiv.textContent = message;
+                statusDiv.className = `message-box ${type}`; // Apply dynamic class
+                statusDiv.classList.remove('hidden');
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 5000); // Hide after 5 seconds
+            }
+        }
+
+        // Function to handle file upload
+        const fileInput = document.getElementById('file-input');
+        const fileDropArea = document.getElementById('file-drop-area');
+        const duplicateRowsElement = document.getElementById('duplicate-rows'); // Make sure you have an element with this ID in your HTML
+
+if (duplicateRowsElement) {
+    const duplicateRowCount = data.df_info.duplicate_rows; // Access the property from df_info
+
+    // Check if the value is explicitly not null or undefined, then convert to string.
+    // If it's null/undefined, display 'N/A' or '0' based on your preference.
+    if (duplicateRowCount !== undefined && duplicateRowCount !== null) {
+        duplicateRowsElement.textContent = String(duplicateRowCount);
+    } else {
+        // Fallback if the data is genuinely missing or undefined
+        duplicateRowsElement.textContent = 'N/A'; // Or '0' if you prefer
+    }
+}
+
+        if (fileInput) {
+            fileInput.addEventListener('change', async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    showLoadingSpinner(true);
+                    displayStatusMessage('Uploading file...', 'info');
+                    displaySection('auto-process-status'); // Show processing status
+
+                    try {
+                        const response = await fetch('/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            displayStatusMessage(`File "${file.name}" uploaded and processed!`, 'success');
+                            state.datasetInfo = data.df_info;
+                            state.activeDatasetId = data.dataset_id;
+                            displayMessage(`File "${file.name}" uploaded successfully! Dataset ID: ${data.dataset_id}`, 'system');
+
+                            // Display initial dashboard info and content
+                            displayDatasetInfo(state.datasetInfo); // Display dataset info on the dashboard
+// NEW LOGIC TO HANDLE dashboard_url
+                            if (data.dashboard_url) {
+                                displayDashboard(data.dashboard_url); // Call the function to display the dashboard in the iframe
+                                displayMessage('Dashboard generated and loaded successfully!', 'system');
+                            } else if (data.dashboard_config) {
+                                // Fallback for dashboard config (if backend sends it instead of a URL)
+                                document.getElementById('dashboard-content').textContent = JSON.stringify(data.dashboard_config, null, 2);
+                                displayMessage('Dashboard configuration received.', 'system');
+                            } else if (data.image_base64) {
+                                // Fallback for direct image data
+                                const img = document.createElement('img');
+                                img.src = `data:image/png;base64,${data.image_base64}`;
+                                img.alt = 'Generated Visualization';
+                                img.style.maxWidth = '100%';
+                                img.style.height = 'auto';
+                                document.getElementById('dashboard-content').innerHTML = ''; // Clear previous
+                                document.getElementById('dashboard-content').appendChild(img);
+                                displayMessage('Visualization generated successfully!', 'system');
+                            } else {
+                                // Default message if no dashboard or visualization data is received
+                                document.getElementById('dashboard-content').innerHTML = '<p class="error-message">No dashboard or visualization was generated automatically. You can chat with the AI to generate one.</p>';
+                                displayMessage('Automatic dashboard generation failed. Please chat with the AI for help.', 'system');
+                            }
+                            displaySection('dashboard-display-section'); // Ensure the dashboard section is shown
+
+                        } else {
+                            displayStatusMessage(`Upload/Processing failed: ${data.error}`, 'error');
+                            displayMessage(`Upload/Processing failed: ${data.error}`, 'system');
+                            displaySection('upload-section'); // Go back to upload if failed
+                        }
+                    } catch (error) {
+                        console.error('Upload failed:', error);
+                        displayStatusMessage(`Network error during upload: ${error.message}`, 'error');
+                        displayMessage(`Network error during upload: ${error.message}`, 'system');
+                        displaySection('upload-section'); // Go back to upload if failed
+                    } finally {
+                        showLoadingSpinner(false);
+                    }
+                }
+            });
+        } else {
+            console.error("File input element not found!");
+        }
+
+        if (fileDropArea) {
+            fileDropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                fileDropArea.classList.add('drag-over');
+            });
+
+            fileDropArea.addEventListener('dragleave', () => {
+                fileDropArea.classList.remove('drag-over');
+            });
+
+            fileDropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                fileDropArea.classList.remove('drag-over');
+                const file = event.dataTransfer.files[0];
+                if (file) {
+                    fileInput.files = event.dataTransfer.files; // Assign dropped file to input
+                    fileInput.dispatchEvent(new Event('change')); // Trigger change event
+                }
+            });
+        } else {
+            console.error("File drop area element not found!");
+        }
+
+        // Function to update the dataset info display (now within dashboard-display-section)
+        function displayDatasetInfo(info) {
+    state.datasetInfo = info;
+    const datasetInfoDiv = document.getElementById('dataset-info');
+    if (!datasetInfoDiv) {
+        console.error("Error: dataset-info element not found!");
+        return;
+    }
+
+    datasetInfoDiv.innerHTML = ''; // Clear previous content
+
+    if (info && info.filename) {
+        datasetInfoDiv.innerHTML += `
+            <h4>Dataset Summary:</h4>
+            <p><strong>File Name:</strong> ${info.filename}</p>
+            <p><strong>Rows:</strong> ${info.rows}</p>
+            <p><strong>Columns:</strong> ${info.columns}</p>
+            <p><strong>Missing Values:</strong> ${info.missing_values}</p>
+            <p><strong>Duplicate Rows:</strong> ${info.duplicate_rows}</p>
+            <p><strong>Data Quality Score:</strong> ${info.data_quality_score}</p> <h4>Column Information:</h4>
+            <div class="column-info-grid"></div>
+        `;
+
+        const columnInfoGrid = datasetInfoDiv.querySelector('.column-info-grid');
+        if (columnInfoGrid && info.column_info) {
+            columnInfoGrid.innerHTML = ''; // Clear existing
+            // FIX: Changed for...in loop to forEach loop for arrays
+            info.column_info.forEach(colData => {
+                const colDiv = document.createElement('div');
+                colDiv.classList.add('column-card');
+                colDiv.innerHTML = `
+                    <h5>${colData.name}</h5> <p>Dtype: ${colData.dtype || 'N/A'}</p>
+                    <p>Unique: ${colData.unique_values !== undefined ? colData.unique_values : 'N/A'}</p>
+                    <p>Missing: ${colData.missing_count !== undefined ? colData.missing_count : 'N/A'} (${colData.missing_percentage !== undefined && colData.missing_percentage !== null ? parseFloat(colData.missing_percentage).toFixed(2) : 0}%)</p>
+                    <p>Subtype: ${colData.subtype || 'N/A'}</p>
+                    ${colData.min !== undefined && colData.max !== undefined ? `<p>Range: ${colData.min} - ${colData.max}</p>` : ''}
+                    ${colData.mean !== undefined ? `<p>Mean: ${parseFloat(colData.mean).toFixed(2)}</p>` : ''}
+                    ${colData.std !== undefined ? `<p>Std Dev: ${parseFloat(colData.std).toFixed(2)}</p>` : ''}
+                    ${colData.top_values && typeof colData.top_values === 'object' ? `<p>Top Values: ${Object.entries(colData.top_values).map(([val, count]) => `${val} (${count})`).join(', ')}</p>` : (typeof colData.top_values === 'string' ? `<p>Top Values: ${colData.top_values}</p>` : 'N/A')}
+                `;
+                columnInfoGrid.appendChild(colDiv);
+            });
+        } else if (!info.column_info) {
+            datasetInfoDiv.innerHTML += '<p class="error-message">Column information is not available.</p>';
+        }
+    } else {
+        datasetInfoDiv.innerHTML = '<p class="error-message">Dataset information not available or incomplete. Please upload a file and try again.</p>';
+    }
+}
+
+function displayDashboard(dashboardUrl) {
+            const dashboardContentDiv = document.getElementById('dashboard-content');
+            dashboardContentDiv.innerHTML = ''; // Clear existing content
+
+            const iframe = document.createElement('iframe');
+            iframe.src = dashboardUrl;
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            iframe.style.minHeight = '600px'; // Ensure visibility
+            iframe.setAttribute('loading', 'lazy');
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+
+            dashboardContentDiv.appendChild(iframe);
+
+            displaySection('dashboard-display-section'); // Show the dashboard section
+
+            // Optional: Hide the default "Dashboard will be displayed here..." message
+            const defaultMessage = dashboardContentDiv.querySelector('p');
+            if (defaultMessage) {
+                defaultMessage.classList.add('hidden');
+            }
+        }
+
+
+        // Function to process chat messages with the backend (Gemini)
+        async function processChat(message) {
+            const chatForm = document.getElementById('chat-input-form');
+            const chatInput = document.getElementById('chat-input');
+            displayMessage(message, 'user'); // Display user message
+            chatInput.value = ''; // Clear input
+            const datasetId = state.activeDatasetId; // Get the active dataset ID from your state
+
+            if (!datasetId) {
+                displayStatusMessage('Error: No active dataset selected for chat.', 'error');
+                showLoadingSpinner(false);
+                return; // Exit if no dataset ID
+            }
+
+            showLoadingSpinner(true);
+            try {
+                const response = await fetch(`/api/chat/${datasetId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        dataset_id: state.activeDatasetId,
+                        chat_history: JSON.parse(sessionStorage.getItem('chat_history') || '[]')
+                    }),
+                });
+
+                const data = await response.json();
+                showLoadingSpinner(false);
+
+                if (response.ok) {
+                    const currentChatHistory = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+                    currentChatHistory.push({ role: 'user', parts: [{ text: message }] });
+
+                    if (data.function_call) {
+                        displayMessage(`AI is calling tool: ${data.function_call.name} with args: ${JSON.stringify(data.function_call.args)}`, 'system', true);
+                        currentChatHistory.push({
+                            role: 'model',
+                            parts: [{ function_call: data.function_call }]
+                        });
+                        sessionStorage.setItem('chat_history', JSON.stringify(currentChatHistory));
+
+                        await executeTool(data.function_call.name, data.function_call.args);
+                    } else if (data.response) {
+                        displayMessage(data.response, 'system');
+                        currentChatHistory.push({ role: 'model', parts: [{ text: data.response }] });
+                        sessionStorage.setItem('chat_history', JSON.stringify(currentChatHistory));
+                    } else if (data.error) {
+                        displayMessage(`Error: ${data.error}`, 'system');
+                        displayStatusMessage(`Chat Error: ${data.error}`, 'error');
+                    }
+                } else {
+                    displayMessage(`Error from server: ${data.error || 'Unknown error'}`, 'system');
+                    displayStatusMessage(`Server Error: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error('Chat communication error:', error);
+                displayMessage(`Chat communication error: ${error.message}. Please check server logs.`, 'system');
+                displayStatusMessage(`Chat communication error: ${error.message}`, 'error');
+                showLoadingSpinner(false);
+            }
+        }
+
+        // Function to execute tool calls (from AI)
+        async function executeTool(toolName, toolArgs) {
+            showLoadingSpinner(true);
+            try {
+                const response = await fetch(`/api/execute_tool/${state.activeDatasetId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tool_name: toolName,
+                        tool_args: toolArgs,
+                        dataset_id: state.activeDatasetId
+                    }),
+                });
+
+                const data = await response.json();
+                showLoadingSpinner(false);
+
+                if (response.ok) {
+                    displayMessage(`Tool output (${toolName}):\n${JSON.stringify(data, null, 2)}`, 'system', true);
+
+                    const currentChatHistory = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+                    currentChatHistory.push({
+                        role: 'tool',
+                        parts: [{
+                            function_response: {
+                                name: toolName,
+                                response: data
+                            }
+                        }]
+                    });
+                    sessionStorage.setItem('chat_history', JSON.stringify(currentChatHistory));
+
+                    await sendToolOutputToAI(toolName, data);
+
+                    // If a tool output updates dataset info, refresh the display
+                    if (data.df_info) {
+                        state.datasetInfo = data.df_info;
+                        displayDatasetInfo(state.datasetInfo);
+                        displayStatusMessage('Dataset info updated after tool execution.', 'info');
+                    }
+                    if (data.image_base64) {
+                        const img = document.createElement('img');
+                        img.src = `data:image/png;base64,${data.image_base64}`;
+                        img.alt = 'Generated Visualization';
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                        document.getElementById('dashboard-content').innerHTML = ''; // Clear previous
+                        document.getElementById('dashboard-content').appendChild(img);
+                        displayMessage('Visualization displayed in dashboard!', 'system');
+                        displaySection('dashboard-display-section');
+                    } else if (data.dashboard_config) {
+                        document.getElementById('dashboard-content').textContent = JSON.stringify(data.dashboard_config, null, 2);
+                        displayMessage('Dashboard config displayed!', 'system');
+                        displaySection('dashboard-display-section');
+                    }
+
+                } else {
+                    displayMessage(`Error executing tool ${toolName}: ${data.error || 'Unknown error'}`, 'system');
+                    displayStatusMessage(`Tool Error: ${data.error || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                console.error(`Error during tool execution (${toolName}):`, error);
+                displayMessage(`Error executing tool ${toolName}: ${error.message}`, 'system');
+                displayStatusMessage(`Tool execution failed: ${error.message}`, 'error');
+                showLoadingSpinner(false);
+            }
+        }
+
+        // Send tool output back to the AI for further reasoning
+        async function sendToolOutputToAI(toolName, toolOutput) {
+            showLoadingSpinner(true);
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tool_response: {
+                            name: toolName,
+                            response: toolOutput
+                        },
+                        dataset_id: state.activeDatasetId,
+                        chat_history: JSON.parse(sessionStorage.getItem('chat_history') || '[]')
+                    }),
+                });
+
+                const data = await response.json();
+                showLoadingSpinner(false);
+
+                if (response.ok && data.response) {
+                    displayMessage(data.response, 'system');
+                    const currentChatHistory = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+                    currentChatHistory.push({ role: 'model', parts: [{ text: data.response }] });
+                    sessionStorage.setItem('chat_history', JSON.stringify(currentChatHistory));
+                } else {
+                    displayMessage(`AI response to tool output failed: ${data.error || 'Unknown error'}`, 'system');
+                }
+            } catch (error) {
+                console.error('Error sending tool output to AI:', error);
+                displayMessage(`Error sending tool output to AI: ${error.message}`, 'system');
+                showLoadingSpinner(false);
+            }
+        }
+
+        // Event listener for chat form submission
+        const chatForm = document.getElementById('chat-input-form');
+        const chatInput = document.getElementById('chat-input');
+        if (chatForm && chatInput) {
+            chatForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const message = chatInput.value.trim();
+
+                if (message) {
+                    if (!state.activeDatasetId) {
+                        displayStatusMessage('Please upload a dataset first before chatting with the AI.', 'warning');
+                        displayMessage('Please upload a dataset first before chatting with the AI.', 'system');
+                        chatInput.value = '';
+                        return;
+                    }
+                    await processChat(message);
+                }
+            });
+        } else {
+            console.error("Chat form or chat input not found in HTML!");
+        }
+
+        // Initialize with the upload section when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            displaySection('upload-section'); // Start with the upload section
+            displayMessage('Hello! Please upload a CSV file to begin.', 'system');
+            sessionStorage.removeItem('chat_history');
+
+            // Restore chat history from session storage on load
+            const savedChatHistory = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+            if (savedChatHistory.length > 0) {
+                savedChatHistory.forEach(chatItem => {
+                    if (chatItem.role === 'user' && chatItem.parts[0] && chatItem.parts[0].text) {
+                        displayMessage(chatItem.parts[0].text, 'user');
+                    } else if (chatItem.role === 'model' && chatItem.parts[0]) {
+                        if (chatItem.parts[0].text) {
+                            displayMessage(chatItem.parts[0].text, 'system');
+                        } else if (chatItem.parts[0].function_call) {
+                            displayMessage(`AI is calling tool: ${chatItem.parts[0].function_call.name} with args: ${JSON.stringify(chatItem.parts[0].function_call.args)}`, 'system', true);
+                        }
+                    } else if (chatItem.role === 'tool' && chatItem.parts[0] && chatItem.parts[0].function_response) {
+                        displayMessage(`Tool output (${chatItem.parts[0].function_response.name}):\n${JSON.stringify(chatItem.parts[0].function_response.response, null, 2)}`, 'system', true);
+                    }
+                });
+            }
+        });
+    </script>
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js" charset="utf-8"></script>
+</body>
+</html>
