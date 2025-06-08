@@ -4,7 +4,7 @@ pandas
 numpy
 werkzeug
 python-dotenv
-google-cloud-vertexai
+google-cloud-aiplatform
 pymongo[srv]
 Flask-Session
 plotly
@@ -12,4 +12,3 @@ scipy
 scikit-learn
 openpyxl
 xlrd
-bson
