@@ -504,7 +504,10 @@ def deserialize_content(serialized_content):
 
 @app.route('/')
 def index():
-    return render_template('new-page.html', app_name=app.config['APPLICATION_NAME'])
+    if 'username' in session:  # User is logged in
+        return render_template('index.html', app_name=app.config['APPLICATION_NAME'])
+    else:  # User is not logged in
+        return render_template('new-page.html', app_name=app.config['APPLICATION_NAME'])
 
 @app.route('/upload', methods=['POST'])
 @login_required
