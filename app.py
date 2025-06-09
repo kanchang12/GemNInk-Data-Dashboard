@@ -38,6 +38,39 @@ import plotly.graph_objects as go # Add this import
 app = Flask(__name__)
 app.config['APPLICATION_NAME'] = 'GemNInk'
 
+def setup_google_credentials():
+    creds_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    
+    if creds_path and creds_path.startswith('http'):
+        # Download JSON from URL to temporary file
+        try:
+            with urllib.request.urlopen(creds_path) as response:
+                creds_data = response.read()
+            
+            # Create temporary file
+            with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as f:
+                f.write(creds_data.decode('utf-8'))
+                temp_path = f.name
+            
+            # Update environment variable to point to local file
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_path
+            print(f"Downloaded credentials to: {temp_path}")
+            
+        except Exception as e:
+            print(f"Error downloading credentials: {e}")
+            return False
+    
+    return True
+
+# Call this before configuring genai
+setup_google_credentials()
+
+try:
+    genai.configure()  # Will use the credentials file
+    print("Google Generative AI configured successfully!")
+except Exception as e:
+    print(f"Error: {e}")
+
 # --- Configuration ---
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', os.urandom(24))
 app.config['SESSION_TYPE'] = 'filesystem'
