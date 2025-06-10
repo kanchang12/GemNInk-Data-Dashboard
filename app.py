@@ -70,6 +70,15 @@ def get_db():
 # --- Session Configuration ---
 Session(app)
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('Please log in to access this page.', 'info')
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # --- Vertex AI Initialization ---
 PROJECT_ID = "gen-lang-client-0035881252"
 REGION = 'us-central1'
