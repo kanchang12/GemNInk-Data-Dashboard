@@ -257,7 +257,7 @@ def create_chart_safe(chart_type, df, data_structure, palette_colors, chart_inde
 
 def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard"):
     """
-    FIXED VERSION - Generate dashboard with App3 AI results
+    FIXED VERSION - Generate dashboard with exactly 6 charts in 3x2 grid
     """
     
     try:
@@ -286,8 +286,8 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
             dashboard_subtitle = "AI-powered data visualization"
             ai_explanation = "Smart visualization of your data patterns and insights"
         
-        # Define chart types for layout
-        chart_types = ['bar', 'pie', 'line', 'scatter', 'histogram', 'box', 'heatmap']
+        # Define exactly 6 chart types for 3x2 layout
+        chart_types = ['bar', 'pie', 'line', 'scatter', 'histogram', 'box']
         
         # Generate charts
         charts_html = []
@@ -342,7 +342,7 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
         
         .charts-grid {{
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(2, 1fr);
             gap: 6px;
             height: calc(100vh - 90px);
@@ -371,12 +371,10 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
         }}
         
         .chart-item:nth-child(1) {{
-            grid-column: span 2;
             border-left: 4px solid {palette_colors[0]};
         }}
         
         .chart-item:nth-child(2) {{
-            grid-column: span 2;
             border-left: 4px solid {palette_colors[1]};
         }}
         
@@ -394,10 +392,6 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
         
         .chart-item:nth-child(6) {{
             border-left: 4px solid {palette_colors[5]};
-        }}
-        
-        .chart-item:nth-child(7) {{
-            border-left: 4px solid {palette_colors[6]};
         }}
         
         .chart-item .plotly-graph-div {{
@@ -450,7 +444,7 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
             body {{ zoom: 0.75; }}
             .charts-grid {{
                 grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(3, auto);
+                grid-template-rows: repeat(2, 1fr);
                 height: calc(100vh - 80px);
                 gap: 4px;
             }}
@@ -460,6 +454,7 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
             body {{ zoom: 0.7; }}
             .charts-grid {{
                 grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(3, 1fr);
                 gap: 4px;
             }}
         }}
@@ -468,6 +463,7 @@ def generate_dashboard_html(df, app3_analysis_results="Data Analysis Dashboard")
             body {{ zoom: 1.0; }}
             .charts-grid {{
                 grid-template-columns: 1fr;
+                grid-template-rows: repeat(6, 1fr);
                 height: auto;
                 gap: 8px;
             }}
