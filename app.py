@@ -519,6 +519,7 @@ def deserialize_content(serialized_content):
 # --- Routes ---
 
 @app.route('/')
+@login_required
 def index():
     if 'username' in session:  # User is logged in
         return render_template('index.html', app_name=app.config['APPLICATION_NAME'])
