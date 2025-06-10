@@ -38,29 +38,6 @@ import plotly.graph_objects as go # Add this import
 app = Flask(__name__)
 app.config['APPLICATION_NAME'] = 'GemNInk'
 
-try:
-    api_key = os.getenv('GOOGLE_API_KEY')
-    if not api_key:
-        raise ValueError("GOOGLE_API_KEY environment variable not set")
-    
-    # Configure with API key only
-    genai.configure(api_key=api_key)
-    
-    # Explicitly remove any credential file references
-    if 'GOOGLE_APPLICATION_CREDENTIALS' in os.environ:
-        del os.environ['GOOGLE_APPLICATION_CREDENTIALS']
-    
-    print("✅ Google Generative AI configured for GemNInk with API key.")
-    
-except Exception as e:
-    print(f"❌ Error configuring Google Generative AI: {e}")
-    print("Make sure GOOGLE_API_KEY is set in your environment variables.")
-try:
-    genai.configure()  # Will use the credentials file
-    print("Google Generative AI configured successfully!")
-except Exception as e:
-    print(f"Error: {e}")
-
 # --- Configuration ---
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', os.urandom(24))
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -97,23 +74,28 @@ Session(app)
 PROJECT_ID = "gen-lang-client-0035881252"
 REGION = 'us-central1'
 
-from functools import wraps
-from flask import session, redirect, url_for, flash
-# ... other imports ...
-
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'username' not in session:
-            flash('Please log in to access this page.', 'info')
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
 vertex_ai_model = None
+
+# Setup credentials
+def get_credentials():
+    credentials_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
+    if credentials_json:
+        try:
+            credentials_info = json.loads(credentials_json)
+            from google.oauth2 import service_account
+            return service_account.Credentials.from_service_account_info(credentials_info)
+        except Exception as e:
+            print(f"Error loading credentials: {e}")
+            return None
+    return None
+
 if PROJECT_ID and REGION:
     try:
-        vertexai.init(project=PROJECT_ID, location=REGION)
+        credentials = get_credentials()
+        if credentials:
+            vertexai.init(project=PROJECT_ID, location=REGION, credentials=credentials)
+        else:
+            vertexai.init(project=PROJECT_ID, location=REGION)
         vertex_ai_model = GenerativeModel(
             "gemini-2.0-flash-001",
             tools=[
