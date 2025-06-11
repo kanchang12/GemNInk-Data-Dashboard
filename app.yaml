@@ -1,0 +1,30 @@
+runtime: python312 # Using Python 3.12, the latest stable version on App Engine
+
+entrypoint: gunicorn -b :$PORT app:app # This is how App Engine starts your Flask app.
+                                       # 'app:app' means 'look in app.py for an object named app'.
+
+instance_class: F1 # 'F1' is generally part of the free tier for App Engine.
+                   # You can increase this (e.g., F2, F4) if your app needs more CPU/memory.
+
+handlers:
+- url: /static
+  static_dir: static/ # This tells App Engine to serve files from your 'static' folder (CSS, JS, images).
+
+- url: /.*
+  script: auto # This routes all other requests to your Flask application.
+
+automatic_scaling:
+  min_instances: 0 # Allows your application to scale down to zero instances when idle, saving costs.
+  max_instances: 1 # Sets the maximum number of instances. Adjust based on expected traffic.
+  # You can add more scaling parameters like target_cpu_utilization if needed.
+
+# --- Environment Variables (Crucial for your application's external connections) ---
+# IMPORTANT: You MUST replace the placeholder values below with your actual, sensitive data.
+# These variables will be available to your Python code via os.getenv().
+env_variables:
+  FLASK_SECRET_KEY: 'YOUR_VERY_STRONG_AND_RANDOM_SECRET_KEY' # Generate a truly unique key for security.
+  MONGO_URI: "mongodb+srv://dbuser:4fRiCewZkPuywKVM@hackathoncluster.cqwqixu.mongodb.net/?retryWrites=true&w=majority&appName=HackathonCluster"        # Your MongoDB Atlas connection string.
+  GOOGLE_CLOUD_PROJECT: 'gen-lang-client-0035881252'         # Your Google Cloud Project ID.
+  GOOGLE_CLOUD_LOCATION: 'us-central1'                      # The region your Vertex AI and other services are in.
+  GCS_DASHBOARD_BUCKET: 'gen-lang-client-0035881252-mybusket' # Your Google Cloud Storage bucket name for dashboards.
+                                                            # Ensure this matches what's in app.py or in your GCS.
