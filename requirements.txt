@@ -12,3 +12,4 @@ scipy
 scikit-learn
 openpyxl
 xlrd
+google-cloud-storage
