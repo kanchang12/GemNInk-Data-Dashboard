@@ -3,7 +3,7 @@ runtime: python312 # Using Python 3.12, the latest stable version on App Engine
 entrypoint: gunicorn -b :$PORT app:app # This is how App Engine starts your Flask app.
                                        # 'app:app' means 'look in app.py for an object named app'.
 
-instance_class: F1 # 'F1' is generally part of the free tier for App Engine.
+instance_class: F4 # 'F1' is generally part of the free tier for App Engine.
                    # You can increase this (e.g., F2, F4) if your app needs more CPU/memory.
 
 handlers:
