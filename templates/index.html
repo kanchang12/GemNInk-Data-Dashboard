@@ -162,6 +162,68 @@
             padding-bottom: 0.5rem;
         }
 
+        .mode-toggle-btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #2563eb;
+    background-color: white;
+    color: #2563eb;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.mode-toggle-btn.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+.mode-toggle-btn:hover {
+    background-color: #1d4ed8;
+    color: white;
+}
+
+.upload-mode-container {
+    transition: opacity 0.3s ease;
+}
+
+.file-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.file-list-item .file-name {
+    flex: 1;
+    color: #374151;
+}
+
+.file-list-item .file-size {
+    color: #6b7280;
+    margin-right: 0.5rem;
+}
+
+.remove-file-btn {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.remove-file-btn:hover {
+    background-color: #dc2626;
+}
+</style>
+
         .column-info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
@@ -325,18 +387,47 @@
             </form>
         </div>
 
-        <div class="dashboard-container" id="dashboard-container">
-            <div id="upload-section" class="dashboard-section active">
-                <h3>Upload Your Data</h3>
-                <div class="file-upload-container" id="file-drop-area">
-                    <input type="file" id="file-input" accept=".csv, .xlsx, .xls, .json, .tsv">
-                    <span class="upload-icon">⬆️</span>
-                    <p class="upload-text">Drag & drop your file here, or click to browse</p>
-                    <button onclick="document.getElementById('file-input').click();">Browse Files</button>
-                </div>
-                <div id="upload-status" class="message-box hidden"></div>
-                <div class="loading-spinner hidden" id="upload-spinner"></div>
-            </div>
+        <!-- Replace your existing upload-section div with this enhanced version -->
+<div id="upload-section" class="dashboard-section active">
+    <h3>Upload Your Data</h3>
+    
+    <!-- Upload Mode Toggle -->
+    <div style="display: flex; justify-content: center; margin-bottom: 2rem; gap: 1rem;">
+        <button id="single-mode-btn" class="mode-toggle-btn active" onclick="switchUploadMode('single')">
+            Single File
+        </button>
+        <button id="multi-mode-btn" class="mode-toggle-btn" onclick="switchUploadMode('multi')">
+            Multiple Files (Join)
+        </button>
+    </div>
+
+    <!-- Single File Upload (Original) -->
+    <div id="single-upload-container" class="upload-mode-container">
+        <div class="file-upload-container" id="file-drop-area">
+            <input type="file" id="file-input" accept=".csv, .xlsx, .xls, .json, .tsv">
+            <span class="upload-icon">⬆️</span>
+            <p class="upload-text">Drag & drop your file here, or click to browse</p>
+            <button onclick="document.getElementById('file-input').click();">Browse Files</button>
+        </div>
+    </div>
+
+    <!-- Multi File Upload (New) -->
+    <div id="multi-upload-container" class="upload-mode-container" style="display: none;">
+        <div class="file-upload-container" id="multi-file-drop-area">
+            <input type="file" id="multi-file-input" multiple accept=".csv">
+            <span class="upload-icon">📊</span>
+            <p class="upload-text">Select 2-3 related CSV files to merge</p>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+                Files should have common columns (like customer_id, order_id) for joining
+            </p>
+            <button onclick="document.getElementById('multi-file-input').click();">Browse Multiple Files</button>
+        </div>
+        <div id="selected-files-list" style="margin-top: 1rem; text-align: left;"></div>
+    </div>
+
+    <div id="upload-status" class="message-box hidden"></div>
+    <div class="loading-spinner hidden" id="upload-spinner"></div>
+</div>
 
             <div id="auto-process-status" class="dashboard-section hidden">
                 <h3>Processing Data...</h3>
@@ -585,6 +676,196 @@ if (duplicateRowsElement) {
         datasetInfoDiv.innerHTML = '<p class="error-message">Dataset information not available or incomplete. Please upload a file and try again.</p>';
     }
 }
+
+let currentUploadMode = 'single';
+let selectedFiles = [];
+
+function switchUploadMode(mode) {
+    currentUploadMode = mode;
+    
+    // Update button states
+    document.getElementById('single-mode-btn').classList.toggle('active', mode === 'single');
+    document.getElementById('multi-mode-btn').classList.toggle('active', mode === 'multi');
+    
+    // Show/hide containers
+    document.getElementById('single-upload-container').style.display = mode === 'single' ? 'block' : 'none';
+    document.getElementById('multi-upload-container').style.display = mode === 'multi' ? 'block' : 'none';
+    
+    // Clear any previous selections
+    if (mode === 'single') {
+        document.getElementById('file-input').value = '';
+    } else {
+        document.getElementById('multi-file-input').value = '';
+        selectedFiles = [];
+        updateFilesList();
+    }
+    
+    // Clear status messages
+    document.getElementById('upload-status').classList.add('hidden');
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function updateFilesList() {
+    const filesList = document.getElementById('selected-files-list');
+    filesList.innerHTML = '';
+    
+    if (selectedFiles.length === 0) {
+        filesList.innerHTML = '<p style="color: #6b7280; font-style: italic;">No files selected</p>';
+        return;
+    }
+    
+    selectedFiles.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-list-item';
+        fileItem.innerHTML = `
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${formatFileSize(file.size)}</span>
+            <button class="remove-file-btn" onclick="removeFile(${index})">×</button>
+        `;
+        filesList.appendChild(fileItem);
+    });
+    
+    // Add upload button if we have files
+    if (selectedFiles.length >= 2) {
+        const uploadBtn = document.createElement('button');
+        uploadBtn.textContent = `Upload & Merge ${selectedFiles.length} Files`;
+        uploadBtn.style.cssText = `
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #059669;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-top: 1rem;
+            cursor: pointer;
+            font-weight: 500;
+        `;
+        uploadBtn.onclick = uploadMultipleFiles;
+        filesList.appendChild(uploadBtn);
+    } else if (selectedFiles.length === 1) {
+        const helpText = document.createElement('p');
+        helpText.style.cssText = 'color: #f59e0b; font-size: 0.9rem; margin-top: 1rem; text-align: center;';
+        helpText.textContent = 'Please select at least one more CSV file to enable merging';
+        filesList.appendChild(helpText);
+    }
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    updateFilesList();
+}
+
+async function uploadMultipleFiles() {
+    if (selectedFiles.length < 2) {
+        displayStatusMessage('Please select at least 2 CSV files to merge', 'warning');
+        return;
+    }
+    
+    const formData = new FormData();
+    selectedFiles.forEach(file => {
+        formData.append('files[]', file);
+    });
+    
+    showLoadingSpinner(true);
+    displayStatusMessage('Uploading and merging files...', 'info');
+    displaySection('auto-process-status');
+    
+    try {
+        const response = await fetch('/upload_multiple', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            displayStatusMessage(`${selectedFiles.length} files merged successfully!`, 'success');
+            state.datasetInfo = data.df_info;
+            state.activeDatasetId = data.dataset_id;
+            
+            const fileNames = selectedFiles.map(f => f.name).join(', ');
+            displayMessage(`Multiple files uploaded and merged: ${fileNames}`, 'system');
+            displayMessage(`Dataset ID: ${data.dataset_id}`, 'system');
+            
+            // Show join information
+            if (data.join_info) {
+                displayMessage(`Join Details: ${JSON.stringify(data.join_info, null, 2)}`, 'system', true);
+            }
+            
+            // Display dataset info and dashboard
+            displayDatasetInfo(state.datasetInfo);
+            
+            if (data.dashboard_url) {
+                displayDashboard(data.dashboard_url);
+                displayMessage('Multi-table dashboard generated successfully!', 'system');
+            }
+            
+            displaySection('dashboard-display-section');
+            
+        } else {
+            displayStatusMessage(`Multi-file upload failed: ${data.error}`, 'error');
+            displayMessage(`Multi-file upload failed: ${data.error}`, 'system');
+            displaySection('upload-section');
+        }
+    } catch (error) {
+        console.error('Multi-file upload failed:', error);
+        displayStatusMessage(`Network error: ${error.message}`, 'error');
+        displayMessage(`Network error: ${error.message}`, 'system');
+        displaySection('upload-section');
+    } finally {
+        showLoadingSpinner(false);
+    }
+}
+
+// Enhanced file input handler for multi-file mode
+document.addEventListener('DOMContentLoaded', function() {
+    const multiFileInput = document.getElementById('multi-file-input');
+    const multiFileDropArea = document.getElementById('multi-file-drop-area');
+    
+    if (multiFileInput) {
+        multiFileInput.addEventListener('change', function(event) {
+            const files = Array.from(event.target.files);
+            selectedFiles = files.filter(file => file.name.toLowerCase().endsWith('.csv'));
+            
+            if (selectedFiles.length !== files.length) {
+                displayStatusMessage('Only CSV files are supported for multi-file upload', 'warning');
+            }
+            
+            updateFilesList();
+        });
+    }
+    
+    if (multiFileDropArea) {
+        multiFileDropArea.addEventListener('dragover', function(event) {
+            event.preventDefault();
+            multiFileDropArea.style.borderColor = '#2563eb';
+        });
+        
+        multiFileDropArea.addEventListener('dragleave', function() {
+            multiFileDropArea.style.borderColor = '#93c5fd';
+        });
+        
+        multiFileDropArea.addEventListener('drop', function(event) {
+            event.preventDefault();
+            multiFileDropArea.style.borderColor = '#93c5fd';
+            
+            const files = Array.from(event.dataTransfer.files);
+            selectedFiles = files.filter(file => file.name.toLowerCase().endsWith('.csv'));
+            
+            if (selectedFiles.length !== files.length) {
+                displayStatusMessage('Only CSV files are supported for multi-file upload', 'warning');
+            }
+            
+            updateFilesList();
+        });
+    }
+});
 
 function displayDashboard(dashboardUrl) {
             const dashboardContentDiv = document.getElementById('dashboard-content');
