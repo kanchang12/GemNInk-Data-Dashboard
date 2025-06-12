@@ -12,64 +12,67 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
         body {
             height: 100vh;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Stack header and main vertically */
             background-color: #f5f5f5;
             color: #333;
         }
 
         /* Header Styling */
         header {
-            background-color: #2563eb;
+            background-color: #2563eb; /* Blue-700 */
             color: white;
             padding: 1rem;
             text-align: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Main Content Area Styling */
+        /* Workflow Navigation Styling - HIDDEN */
+        .workflow-nav {
+            display: none; /* Hide the workflow navigation */
+        }
+
+        /* Main Content Area Styling - NEW FLEX CONTAINER */
         .main-container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            padding: 1rem;
-            gap: 1rem;
+            display: flex; /* Make it a flex container for chat and dashboard */
+            flex: 1; /* Allow it to grow and fill available space */
+            overflow: hidden; /* Hide overflow if content is too large */
+            padding: 1rem; /* Add some padding around the main content */
+            gap: 1rem; /* Space between chat and dashboard */
         }
 
         /* Chat Section Styling (Left Column) */
         .chat-section {
-            flex: 0 0 350px;
-            max-width: 350px;
+            flex: 0 0 350px; /* Fixed width for chat, don't grow/shrink */
+            max-width: 350px; /* Ensure it doesn't get too wide */
             display: flex;
             flex-direction: column;
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            overflow: hidden;
-            max-height: calc(100vh - 3rem); /* Ensure it fits in viewport */
+            overflow: hidden; /* Ensure chat messages don't overflow */
         }
 
         .chat-header {
-            background-color: #60a5fa;
+            background-color: #60a5fa; /* Blue-400 */
             color: white;
             padding: 0.75rem 1rem;
             font-weight: bold;
             text-align: center;
-            flex-shrink: 0; /* Don't shrink */
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
         }
 
         .chat-messages {
-            flex: 1;
+            flex: 1; /* Allows message area to grow */
             padding: 1rem;
-            overflow-y: auto;
+            overflow-y: auto; /* Scroll for messages */
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            word-wrap: break-word;
-            min-height: 150px; /* Minimum visible chat area */
+            word-wrap: break-word; /* Ensure long words wrap */
         }
 
         .chat-message {
@@ -78,21 +81,18 @@
             border-radius: 1rem;
             line-height: 1.4;
         }
-        
         .chat-message.user {
-            background-color: #e0f2fe;
+            background-color: #e0f2fe; /* Light blue */
             align-self: flex-end;
             border-bottom-right-radius: 0.3rem;
         }
-        
         .chat-message.system {
-            background-color: #e5e7eb;
+            background-color: #e5e7eb; /* Light gray */
             align-self: flex-start;
             border-bottom-left-radius: 0.3rem;
         }
-        
         .chat-message.tool-output {
-            background-color: #fffbe6;
+            background-color: #fffbe6; /* Light yellow */
             border: 1px dashed #d9b300;
             color: #333;
             font-size: 0.85em;
@@ -100,12 +100,12 @@
             border-bottom-left-radius: 0.3rem;
         }
 
+
         .chat-input-form {
             display: flex;
             padding: 1rem;
             border-top: 1px solid #e5e7eb;
             background-color: #f9fafb;
-            flex-shrink: 0; /* Don't shrink */
         }
 
         .chat-input-form input[type="text"] {
@@ -126,386 +126,134 @@
             cursor: pointer;
             transition: background-color 0.2s ease;
         }
-        
         .chat-input-form button:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* Dynamic Graphs Section (Top of left panel) */
-        .dynamic-graphs-section {
-            background-color: #f9fafb;
-            flex: 1; /* Take up more space */
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .graphs-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            background-color: #374151;
-            color: white;
-            font-weight: 500;
-            font-size: 0.9rem;
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-
-        .clear-graphs-btn {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.3rem 0.6rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background-color 0.2s;
-        }
-
-        .clear-graphs-btn:hover {
-            background-color: #dc2626;
-        }
-
-        .dynamic-graphs-container {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .graph-placeholder {
-            text-align: center;
-            padding: 2rem 1rem;
-            color: #6b7280;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            min-height: 200px;
-        }
-
-        .placeholder-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            opacity: 0.7;
-        }
-
-        .placeholder-text {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-        }
-
-        .placeholder-subtext {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            line-height: 1.4;
-            max-width: 280px;
-            text-align: left;
-        }
-
-        .dynamic-graph-item {
-            background-color: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            padding: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: relative;
-        }
-
-        .dynamic-graph-item .graph-title {
-            background-color: #f3f4f6;
-            color: #374151;
-            padding: 0.4rem 0.6rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border-radius: 4px 4px 0 0;
-            margin: -0.5rem -0.5rem 0.5rem -0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .dynamic-graph-item .graph-content {
-            text-align: center;
-        }
-
-        .dynamic-graph-item img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 4px;
-        }
-
-        .remove-graph-btn {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            padding: 0.2rem 0.4rem;
-            cursor: pointer;
-            font-size: 0.7rem;
-            opacity: 0.8;
-        }
-
-        .remove-graph-btn:hover {
-            opacity: 1;
-            background-color: #dc2626;
-        }
-
-        /* Chat Widget (Bottom of left panel) */
-        .chat-widget {
-            flex: 0 0 auto; /* Fixed size, don't grow */
-            display: flex;
-            flex-direction: column;
-            min-height: 300px; /* Minimum height for chat */
-            max-height: 400px; /* Maximum height for chat */
+            background-color: #1d4ed8; /* Darker blue */
         }
 
         /* Dashboard Container Styling (Right Column) */
         .dashboard-container {
-            flex: 1;
+            flex: 1; /* Allows dashboard to take remaining space */
             display: flex;
-            flex-direction: column;
+            flex-direction: column; /* Stack sections inside dashboard vertically */
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             padding: 1rem;
-            overflow-y: auto;
+            overflow-y: auto; /* Enable scrolling for dashboard content */
         }
 
-        /* Dashboard Section Styling */
+        /* Specific section styling for dashboard */
         .dashboard-section {
-            display: none;
+            display: none; /* Hidden by default */
             padding: 1rem;
+            border-bottom: 1px solid #eee; /* Separator for sections */
         }
 
         .dashboard-section.active {
-            display: block;
+            display: block; /* Show active section */
         }
 
-        /* Upload Section Styling */
-        #upload-section {
-            text-align: center;
-            padding: 2rem;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-        }
-
-        #upload-section h3 {
-            color: #2563eb;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-        }
-
-        /* Upload Mode Toggle Buttons */
-        .upload-mode-toggle {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2rem;
-            gap: 1rem;
-        }
-
-        .mode-toggle-btn {
-            padding: 0.75rem 1.5rem;
-            border: 2px solid #2563eb;
-            background-color: white;
-            color: #2563eb;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
-        }
-
-        .mode-toggle-btn.active {
-            background-color: #2563eb;
-            color: white;
-        }
-
-        .mode-toggle-btn:hover {
-            background-color: #1d4ed8;
-            color: white;
-        }
-
-        /* File Upload Container */
-        .file-upload-container {
-            border: 2px dashed #93c5fd;
-            padding: 2rem;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 400px;
-        }
-
-        .file-upload-container:hover {
-            border-color: #2563eb;
-            background-color: #eff6ff;
-        }
-
-        .file-upload-container input[type="file"] {
-            display: none;
-        }
-
-        .file-upload-container .upload-icon {
-            font-size: 3rem;
-            color: #60a5fa;
-        }
-
-        .file-upload-container .upload-text {
-            color: #4b5563;
-            font-size: 1.1rem;
-            text-align: center;
-        }
-
-        .file-upload-container button {
-            background-color: #2563eb;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.2s ease;
-            margin-top: 1rem;
-        }
-
-        .file-upload-container button:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* Upload Mode Containers */
-        .upload-mode-container {
-            width: 100%;
-            transition: opacity 0.3s ease;
-        }
-
-        /* Selected Files List */
-        #selected-files-list {
-            margin-top: 1.5rem;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .file-preview-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .file-preview-item .file-details {
-            flex: 1;
-            text-align: left;
-        }
-
-        .file-preview-item .file-name {
-            font-weight: 500;
-            color: #374151;
-        }
-
-        .file-preview-item .file-size {
-            color: #6b7280;
-            font-size: 0.8rem;
-        }
-
-        .remove-file-btn {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 0.3rem 0.6rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: background-color 0.2s;
-        }
-
-        .remove-file-btn:hover {
-            background-color: #dc2626;
-        }
-
-        .upload-multiple-btn {
-            width: 100%;
-            padding: 0.8rem;
-            background-color: #059669;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            margin-top: 1rem;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: background-color 0.2s;
-        }
-
-        .upload-multiple-btn:hover {
-            background-color: #047857;
-        }
-
-        /* Dataset Info Styling */
+        /* Styles for dataset-info section */
         #dataset-info h4 {
             margin-top: 1.5rem;
             margin-bottom: 1rem;
             color: #2563eb;
-            border-bottom: 2px solid #eff6ff;
+            border-bottom: 2px solid #eff6ff; /* Light blue underline */
             padding-bottom: 0.5rem;
         }
 
         .column-info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Responsive grid */
             gap: 1rem;
             margin-top: 1rem;
         }
 
         .column-card {
-            background-color: #f8fafc;
+            background-color: #f8fafc; /* Lighter background for cards */
             border: 1px solid #e2e8f0;
             border-radius: 6px;
             padding: 1rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             transition: transform 0.2s ease;
         }
-
         .column-card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* Slight lift on hover */
         }
-
         .column-card h5 {
-            color: #1e40af;
+            color: #1e40af; /* Darker blue for column names */
             margin-bottom: 0.5rem;
             font-size: 1.1em;
             border-bottom: 1px dashed #bfdbfe;
             padding-bottom: 0.3rem;
         }
-
         .column-card p {
             font-size: 0.9em;
             line-height: 1.5;
             margin-bottom: 0.2em;
         }
 
-        /* Utility Styles */
+        /* File Upload Specific Styling */
+        #upload-section {
+            text-align: center;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 2rem; /* Center the upload box */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        #upload-section h3 {
+            color: #2563eb;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-upload-container {
+            border: 2px dashed #93c5fd; /* Light blue dashed border */
+            padding: 2rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+        .file-upload-container:hover {
+            border-color: #2563eb; /* Darker blue on hover */
+        }
+        .file-upload-container input[type="file"] {
+            display: none; /* Hide default input */
+        }
+        .file-upload-container .upload-icon {
+            font-size: 3rem; /* Large icon */
+            color: #60a5fa; /* Blue-400 */
+        }
+        .file-upload-container .upload-text {
+            color: #4b5563; /* Gray-700 */
+            font-size: 1.1rem;
+        }
+        .file-upload-container button {
+            background-color: #2563eb;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease;
+            margin-top: 1rem;
+        }
+        .file-upload-container button:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* General Utility Styles */
         .loading-spinner {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #2563eb;
@@ -514,7 +262,7 @@
             height: 30px;
             animation: spin 1s linear infinite;
             margin: 1rem auto;
-            display: block;
+            display: block; /* Ensures it's visible if needed */
         }
 
         @keyframes spin {
@@ -533,61 +281,31 @@
             font-size: 0.95rem;
             line-height: 1.4;
         }
-
         .message-box.success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
+            background-color: #d1fae5; /* Green-100 */
+            color: #065f46; /* Green-800 */
+            border: 1px solid #a7f3d0; /* Green-200 */
         }
-
         .message-box.error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+            background-color: #fee2e2; /* Red-100 */
+            color: #991b1b; /* Red-800 */
+            border: 1px solid #fecaca; /* Red-200 */
         }
-
         .message-box.info {
-            background-color: #e0f2fe;
-            color: #0c4a6e;
-            border: 1px solid #bfdbfe;
+            background-color: #e0f2fe; /* Blue-100 */
+            color: #0c4a6e; /* Blue-800 */
+            border: 1px solid #bfdbfe; /* Blue-200 */
         }
-
         .message-box.warning {
-            background-color: #fffbeb;
-            color: #9a3412;
-            border: 1px solid #fcd34d;
+            background-color: #fffbeb; /* Yellow-100 */
+            color: #9a3412; /* Orange-800 */
+            border: 1px solid #fcd34d; /* Yellow-200 */
         }
 
         .error-message {
-            color: #dc2626;
+            color: #dc2626; /* Red-600 */
             font-weight: bold;
             margin-top: 1rem;
-        }
-
-        /* Processing Status */
-        #auto-process-status {
-            text-align: center;
-            padding: 3rem;
-        }
-
-        #auto-process-status h3 {
-            color: #2563eb;
-            margin-bottom: 1rem;
-        }
-
-        /* Dashboard Display */
-        #dashboard-display-section h3 {
-            color: #2563eb;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #eff6ff;
-            padding-bottom: 0.5rem;
-        }
-
-        #dashboard-content {
-            min-height: 400px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            overflow: hidden;
         }
     </style>
 </head>
@@ -597,180 +315,59 @@
     </header>
 
     <div class="main-container">
-        <!-- Chat Section -->
         <div class="chat-section">
-            <!-- Dynamic Graphs Section (Top) -->
-            <div class="dynamic-graphs-section">
-                <div class="graphs-header">
-                    <span>Custom Visualizations</span>
-                    <button id="clear-graphs-btn" class="clear-graphs-btn hidden" onclick="clearDynamicGraphs()">Clear</button>
+            <div class="chat-header">AI Assistant</div>
+            <div class="chat-messages" id="chat-messages">
                 </div>
-                <div class="dynamic-graphs-container" id="dynamic-graphs-container">
-                    <div class="graph-placeholder" id="graph-placeholder">
-                        <div class="placeholder-icon">📊</div>
-                        <p class="placeholder-text">Ask me to create specific visualizations!</p>
-                        <p class="placeholder-subtext">Examples:<br>
-                        • "Show sales by region as a bar chart"<br>
-                        • "Create a line plot of trends over time"<br>
-                        • "Make a scatter plot of price vs rating"<br>
-                        • "Show distribution of customer ages"</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Chat Widget (Bottom) -->
-            <div class="chat-widget">
-                <div class="chat-header">AI Assistant</div>
-                <div class="chat-messages" id="chat-messages"></div>
-                <form id="chat-input-form" class="chat-input-form">
-                    <input type="text" id="chat-input" placeholder="Ask about your data..." autocomplete="off">
-                    <button type="submit">Send</button>
-                </form>
-            </div>
+            <form id="chat-input-form" class="chat-input-form">
+                <input type="text" id="chat-input" placeholder="Ask about your data..." autocomplete="off">
+                <button type="submit">Send</button>
+            </form>
         </div>
 
-        <!-- Dashboard Container -->
         <div class="dashboard-container" id="dashboard-container">
-            <!-- Upload Section -->
             <div id="upload-section" class="dashboard-section active">
                 <h3>Upload Your Data</h3>
-                
-                <!-- Upload Mode Toggle -->
-                <div class="upload-mode-toggle">
-                    <button id="single-mode-btn" class="mode-toggle-btn active" onclick="switchUploadMode('single')">
-                        📄 Single File
-                    </button>
-                    <button id="multi-mode-btn" class="mode-toggle-btn" onclick="switchUploadMode('multi')">
-                        📊 Multiple Files
-                    </button>
+                <div class="file-upload-container" id="file-drop-area">
+                    <input type="file" id="file-input" accept=".csv, .xlsx, .xls, .json, .tsv">
+                    <span class="upload-icon">⬆️</span>
+                    <p class="upload-text">Drag & drop your file here, or click to browse</p>
+                    <button onclick="document.getElementById('file-input').click();">Browse Files</button>
                 </div>
-
-                <!-- Single File Upload -->
-                <div id="single-upload-container" class="upload-mode-container">
-                    <div class="file-upload-container" id="file-drop-area">
-                        <input type="file" id="file-input" accept=".csv, .xlsx, .xls, .json, .tsv">
-                        <span class="upload-icon">⬆️</span>
-                        <p class="upload-text">Drag & drop your file here, or click to browse</p>
-                        <button onclick="document.getElementById('file-input').click();">Browse Files</button>
-                    </div>
-                </div>
-
-                <!-- Multi File Upload -->
-                <div id="multi-upload-container" class="upload-mode-container" style="display: none;">
-                    <div class="file-upload-container" id="multi-file-drop-area">
-                        <input type="file" id="multi-file-input" multiple accept=".csv">
-                        <span class="upload-icon">📊</span>
-                        <p class="upload-text">Select 2-5 related CSV files to merge</p>
-                        <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">
-                            Files should have common columns (like ID, date) for smart joining
-                        </p>
-                        <button onclick="document.getElementById('multi-file-input').click();">Browse Multiple CSVs</button>
-                    </div>
-                    
-                    <!-- Selected Files Preview -->
-                    <div id="selected-files-list"></div>
-                </div>
-
                 <div id="upload-status" class="message-box hidden"></div>
                 <div class="loading-spinner hidden" id="upload-spinner"></div>
             </div>
 
-            <!-- Processing Status Section -->
             <div id="auto-process-status" class="dashboard-section hidden">
                 <h3>Processing Data...</h3>
                 <p>Please wait while your data is being cleaned, analyzed, and a dashboard is generated.</p>
                 <div class="loading-spinner"></div>
             </div>
 
-            <!-- Dashboard Display Section -->
             <div id="dashboard-display-section" class="dashboard-section hidden">
                 <h3>Your Dashboard</h3>
                 <div id="dashboard-content">
                     <p>Dashboard will be displayed here after processing.</p>
                 </div>
-                <div id="dataset-info"></div>
+                <div id="dataset-info">
+                    </div>
             </div>
+
+            <div id="overview-section" class="dashboard-section hidden"></div>
+            <div id="clean_transform-section" class="dashboard-section hidden"></div>
+            <div id="insights-section" class="dashboard-section hidden"></div>
         </div>
     </div>
 
     <script>
-        // State management
+        // State management for active step and completed steps - Simplified
         const state = {
-            activeStep: 'upload',
+            activeStep: 'upload', // Only 'upload', 'processing', 'dashboard' are main states
             datasetInfo: null,
             activeDatasetId: null
         };
 
-        // Upload mode variables
-        let currentUploadMode = 'single';
-        let selectedFiles = [];
-        let dynamicGraphCounter = 0;
-
-        // Dynamic Graphs Management
-        function addDynamicGraph(imageData, title = null) {
-            const container = document.getElementById('dynamic-graphs-container');
-            const placeholder = document.getElementById('graph-placeholder');
-            const clearBtn = document.getElementById('clear-graphs-btn');
-            
-            // Hide placeholder on first graph
-            if (placeholder && !placeholder.classList.contains('hidden')) {
-                placeholder.classList.add('hidden');
-                clearBtn.classList.remove('hidden');
-            }
-            
-            dynamicGraphCounter++;
-            const graphId = `dynamic-graph-${dynamicGraphCounter}`;
-            const graphTitle = title || `Visualization ${dynamicGraphCounter}`;
-            
-            const graphItem = document.createElement('div');
-            graphItem.className = 'dynamic-graph-item';
-            graphItem.id = graphId;
-            graphItem.innerHTML = `
-                <div class="graph-title">
-                    <span>${graphTitle}</span>
-                    <button class="remove-graph-btn" onclick="removeDynamicGraph('${graphId}')">×</button>
-                </div>
-                <div class="graph-content">
-                    <img src="data:image/png;base64,${imageData}" alt="${graphTitle}" style="max-width: 100%; height: auto;">
-                </div>
-            `;
-            
-            container.appendChild(graphItem);
-            
-            // Scroll to show new graph
-            container.scrollTop = container.scrollHeight;
-            
-            return graphId;
-        }
-
-        function removeDynamicGraph(graphId) {
-            const graphItem = document.getElementById(graphId);
-            if (graphItem) {
-                graphItem.remove();
-                
-                // Show placeholder if no graphs left
-                const container = document.getElementById('dynamic-graphs-container');
-                const remainingGraphs = container.querySelectorAll('.dynamic-graph-item');
-                if (remainingGraphs.length === 0) {
-                    document.getElementById('graph-placeholder').classList.remove('hidden');
-                    document.getElementById('clear-graphs-btn').classList.add('hidden');
-                }
-            }
-        }
-
-        function clearDynamicGraphs() {
-            const container = document.getElementById('dynamic-graphs-container');
-            const graphs = container.querySelectorAll('.dynamic-graph-item');
-            graphs.forEach(graph => graph.remove());
-            
-            // Show placeholder
-            document.getElementById('graph-placeholder').classList.remove('hidden');
-            document.getElementById('clear-graphs-btn').classList.add('hidden');
-            
-            displayMessage('🗑️ All custom visualizations cleared', 'system');
-        }
-
-        // Display section function
+        // Simplified step handling - now primarily for showing/hiding sections
         function displaySection(sectionId) {
             document.querySelectorAll('.dashboard-section').forEach(section => {
                 if (section.id === sectionId) {
@@ -781,10 +378,10 @@
                     section.classList.remove('active');
                 }
             });
-            state.activeStep = sectionId;
+            state.activeStep = sectionId; // Update the state
         }
 
-        // Display messages in chat
+        // Function to display messages in the chat
         function displayMessage(message, sender = 'user', isToolOutput = false) {
             const chatMessagesDiv = document.getElementById('chat-messages');
             const messageElement = document.createElement('div');
@@ -804,9 +401,9 @@
             chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
         }
 
-        // Show/hide loading spinner
+        // Function to show/hide loading spinner
         function showLoadingSpinner(show) {
-            const spinner = document.getElementById('upload-spinner');
+            const spinner = document.getElementById('upload-spinner'); // Re-using this for general loading feedback
             if (spinner) {
                 if (show) {
                     spinner.classList.remove('hidden');
@@ -816,238 +413,216 @@
             }
         }
 
-        // Display status messages
+        // Function to display system/error messages in a designated area
         function displayStatusMessage(message, type = 'info') {
-            const statusDiv = document.getElementById('upload-status');
+            const statusDiv = document.getElementById('upload-status'); // Re-using upload status for general messages
             if (statusDiv) {
                 statusDiv.textContent = message;
-                statusDiv.className = `message-box ${type}`;
+                statusDiv.className = `message-box ${type}`; // Apply dynamic class
                 statusDiv.classList.remove('hidden');
                 setTimeout(() => {
                     statusDiv.classList.add('hidden');
-                }, 5000);
+                }, 5000); // Hide after 5 seconds
             }
         }
 
-        // Switch upload mode
-        function switchUploadMode(mode) {
-            currentUploadMode = mode;
-            
-            // Update button states
-            document.getElementById('single-mode-btn').classList.toggle('active', mode === 'single');
-            document.getElementById('multi-mode-btn').classList.toggle('active', mode === 'multi');
-            
-            // Show/hide containers
-            document.getElementById('single-upload-container').style.display = mode === 'single' ? 'block' : 'none';
-            document.getElementById('multi-upload-container').style.display = mode === 'multi' ? 'block' : 'none';
-            
-            // Clear selections
-            if (mode === 'single') {
-                document.getElementById('file-input').value = '';
-            } else {
-                document.getElementById('multi-file-input').value = '';
-                selectedFiles = [];
-                updateMultiFilesList();
-            }
-            
-            // Clear status
-            document.getElementById('upload-status').classList.add('hidden');
-        }
+        // Function to handle file upload
+        const fileInput = document.getElementById('file-input');
+        const fileDropArea = document.getElementById('file-drop-area');
+        const duplicateRowsElement = document.getElementById('duplicate-rows'); // Make sure you have an element with this ID in your HTML
 
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
+if (duplicateRowsElement) {
+    const duplicateRowCount = data.df_info.duplicate_rows; // Access the property from df_info
 
-        // Update multi files list
-        function updateMultiFilesList() {
-            const filesList = document.getElementById('selected-files-list');
-            filesList.innerHTML = '';
-            
-            if (selectedFiles.length === 0) {
-                filesList.innerHTML = '<p style="color: #6b7280; font-style: italic; text-align: center;">No files selected</p>';
-                return;
-            }
-            
-            selectedFiles.forEach((file, index) => {
-                const fileItem = document.createElement('div');
-                fileItem.className = 'file-preview-item';
-                fileItem.innerHTML = `
-                    <div class="file-details">
-                        <div class="file-name">${file.name}</div>
-                        <div class="file-size">${formatFileSize(file.size)}</div>
-                    </div>
-                    <button class="remove-file-btn" onclick="removeFile(${index})">Remove</button>
-                `;
-                filesList.appendChild(fileItem);
-            });
-            
-            // Add upload button if we have 2+ files
-            if (selectedFiles.length >= 2) {
-                const uploadBtn = document.createElement('button');
-                uploadBtn.className = 'upload-multiple-btn';
-                uploadBtn.textContent = `🚀 Upload & Merge ${selectedFiles.length} Files`;
-                uploadBtn.onclick = uploadMultipleFiles;
-                filesList.appendChild(uploadBtn);
-            } else if (selectedFiles.length === 1) {
-                const helpText = document.createElement('p');
-                helpText.style.cssText = 'color: #f59e0b; font-size: 0.9rem; margin-top: 1rem; text-align: center; font-style: italic;';
-                helpText.textContent = '📝 Select at least one more CSV to enable merging';
-                filesList.appendChild(helpText);
-            }
-        }
+    // Check if the value is explicitly not null or undefined, then convert to string.
+    // If it's null/undefined, display 'N/A' or '0' based on your preference.
+    if (duplicateRowCount !== undefined && duplicateRowCount !== null) {
+        duplicateRowsElement.textContent = String(duplicateRowCount);
+    } else {
+        // Fallback if the data is genuinely missing or undefined
+        duplicateRowsElement.textContent = 'N/A'; // Or '0' if you prefer
+    }
+}
 
-        // Remove file from selection
-        function removeFile(index) {
-            selectedFiles.splice(index, 1);
-            updateMultiFilesList();
-        }
+        if (fileInput) {
+            fileInput.addEventListener('change', async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    showLoadingSpinner(true);
+                    displayStatusMessage('Uploading file...', 'info');
+                    displaySection('auto-process-status'); // Show processing status
 
-        // Upload multiple files
-        async function uploadMultipleFiles() {
-            if (selectedFiles.length < 2) {
-                displayStatusMessage('Please select at least 2 CSV files', 'warning');
-                return;
-            }
-            
-            const formData = new FormData();
-            selectedFiles.forEach(file => {
-                formData.append('files[]', file);
-            });
-            
-            showLoadingSpinner(true);
-            displayStatusMessage('Merging files and generating dashboard...', 'info');
-            displaySection('auto-process-status');
-            
-            try {
-                const response = await fetch('/upload_multiple', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                
-                if (response.ok) {
-                    displayStatusMessage(`${selectedFiles.length} files merged successfully!`, 'success');
-                    state.datasetInfo = data.df_info;
-                    state.activeDatasetId = data.dataset_id;
-                    
-                    const fileNames = selectedFiles.map(f => f.name).join(', ');
-                    displayMessage(`✅ Files merged: ${fileNames}`, 'system');
-                    displayMessage(`📊 Dataset ID: ${data.dataset_id}`, 'system');
-                    displayMessage('💡 Your data is ready! Ask for custom visualizations like "Show trends across files" or "Compare data by source"', 'system');
-                    
-                    // Show merge details
-                    if (data.join_info) {
-                        displayMessage(`🔗 Merge info: ${JSON.stringify(data.join_info, null, 2)}`, 'system', true);
+                    try {
+                        const response = await fetch('/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            displayStatusMessage(`File "${file.name}" uploaded and processed!`, 'success');
+                            state.datasetInfo = data.df_info;
+                            state.activeDatasetId = data.dataset_id;
+                            displayMessage(`File "${file.name}" uploaded successfully! Dataset ID: ${data.dataset_id}`, 'system');
+
+                            // Display initial dashboard info and content
+                            displayDatasetInfo(state.datasetInfo); // Display dataset info on the dashboard
+// NEW LOGIC TO HANDLE dashboard_url
+                            if (data.dashboard_url) {
+                                displayDashboard(data.dashboard_url); // Call the function to display the dashboard in the iframe
+                                displayMessage('Dashboard generated and loaded successfully!', 'system');
+                            } else if (data.dashboard_config) {
+                                // Fallback for dashboard config (if backend sends it instead of a URL)
+                                document.getElementById('dashboard-content').textContent = JSON.stringify(data.dashboard_config, null, 2);
+                                displayMessage('Dashboard configuration received.', 'system');
+                            } else if (data.image_base64) {
+                                // Fallback for direct image data
+                                const img = document.createElement('img');
+                                img.src = `data:image/png;base64,${data.image_base64}`;
+                                img.alt = 'Generated Visualization';
+                                img.style.maxWidth = '100%';
+                                img.style.height = 'auto';
+                                document.getElementById('dashboard-content').innerHTML = ''; // Clear previous
+                                document.getElementById('dashboard-content').appendChild(img);
+                                displayMessage('Visualization generated successfully!', 'system');
+                            } else {
+                                // Default message if no dashboard or visualization data is received
+                                document.getElementById('dashboard-content').innerHTML = '<p class="error-message">No dashboard or visualization was generated automatically. You can chat with the AI to generate one.</p>';
+                                displayMessage('Automatic dashboard generation failed. Please chat with the AI for help.', 'system');
+                            }
+                            displaySection('dashboard-display-section'); // Ensure the dashboard section is shown
+
+                        } else {
+                            displayStatusMessage(`Upload/Processing failed: ${data.error}`, 'error');
+                            displayMessage(`Upload/Processing failed: ${data.error}`, 'system');
+                            displaySection('upload-section'); // Go back to upload if failed
+                        }
+                    } catch (error) {
+                        console.error('Upload failed:', error);
+                        displayStatusMessage(`Network error during upload: ${error.message}`, 'error');
+                        displayMessage(`Network error during upload: ${error.message}`, 'system');
+                        displaySection('upload-section'); // Go back to upload if failed
+                    } finally {
+                        showLoadingSpinner(false);
                     }
-                    
-                    // Display dataset info and dashboard
-                    displayDatasetInfo(state.datasetInfo);
-                    
-                    if (data.dashboard_url) {
-                        displayDashboard(data.dashboard_url);
-                        displayMessage('📈 Dashboard generated from merged data!', 'system');
-                    }
-                    
-                    displaySection('dashboard-display-section');
-                    
-                } else {
-                    displayStatusMessage(`❌ Merge failed: ${data.error}`, 'error');
-                    displayMessage(`❌ Merge failed: ${data.error}`, 'system');
-                    displaySection('upload-section');
                 }
-            } catch (error) {
-                console.error('Multi-file upload failed:', error);
-                displayStatusMessage(`❌ Network error: ${error.message}`, 'error');
-                displayMessage(`❌ Network error: ${error.message}`, 'system');
-                displaySection('upload-section');
-            } finally {
-                showLoadingSpinner(false);
-            }
+            });
+        } else {
+            console.error("File input element not found!");
         }
 
-        // Display dashboard
-        function displayDashboard(dashboardUrl) {
+        if (fileDropArea) {
+            fileDropArea.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                fileDropArea.classList.add('drag-over');
+            });
+
+            fileDropArea.addEventListener('dragleave', () => {
+                fileDropArea.classList.remove('drag-over');
+            });
+
+            fileDropArea.addEventListener('drop', (event) => {
+                event.preventDefault();
+                fileDropArea.classList.remove('drag-over');
+                const file = event.dataTransfer.files[0];
+                if (file) {
+                    fileInput.files = event.dataTransfer.files; // Assign dropped file to input
+                    fileInput.dispatchEvent(new Event('change')); // Trigger change event
+                }
+            });
+        } else {
+            console.error("File drop area element not found!");
+        }
+
+        // Function to update the dataset info display (now within dashboard-display-section)
+        function displayDatasetInfo(info) {
+    state.datasetInfo = info;
+    const datasetInfoDiv = document.getElementById('dataset-info');
+    if (!datasetInfoDiv) {
+        console.error("Error: dataset-info element not found!");
+        return;
+    }
+
+    datasetInfoDiv.innerHTML = ''; // Clear previous content
+
+    if (info && info.filename) {
+        datasetInfoDiv.innerHTML += `
+            <h4>Dataset Summary:</h4>
+            <p><strong>File Name:</strong> ${info.filename}</p>
+            <p><strong>Rows:</strong> ${info.rows}</p>
+            <p><strong>Columns:</strong> ${info.columns}</p>
+            <p><strong>Missing Values:</strong> ${info.missing_values}</p>
+            <p><strong>Duplicate Rows:</strong> ${info.duplicate_rows}</p>
+            <p><strong>Data Quality Score:</strong> ${info.data_quality_score}</p> <h4>Column Information:</h4>
+            <div class="column-info-grid"></div>
+        `;
+
+        const columnInfoGrid = datasetInfoDiv.querySelector('.column-info-grid');
+        if (columnInfoGrid && info.column_info) {
+            columnInfoGrid.innerHTML = ''; // Clear existing
+            // FIX: Changed for...in loop to forEach loop for arrays
+            info.column_info.forEach(colData => {
+                const colDiv = document.createElement('div');
+                colDiv.classList.add('column-card');
+                colDiv.innerHTML = `
+                    <h5>${colData.name}</h5> <p>Dtype: ${colData.dtype || 'N/A'}</p>
+                    <p>Unique: ${colData.unique_values !== undefined ? colData.unique_values : 'N/A'}</p>
+                    <p>Missing: ${colData.missing_count !== undefined ? colData.missing_count : 'N/A'} (${colData.missing_percentage !== undefined && colData.missing_percentage !== null ? parseFloat(colData.missing_percentage).toFixed(2) : 0}%)</p>
+                    <p>Subtype: ${colData.subtype || 'N/A'}</p>
+                    ${colData.min !== undefined && colData.max !== undefined ? `<p>Range: ${colData.min} - ${colData.max}</p>` : ''}
+                    ${colData.mean !== undefined ? `<p>Mean: ${parseFloat(colData.mean).toFixed(2)}</p>` : ''}
+                    ${colData.std !== undefined ? `<p>Std Dev: ${parseFloat(colData.std).toFixed(2)}</p>` : ''}
+                    ${colData.top_values && typeof colData.top_values === 'object' ? `<p>Top Values: ${Object.entries(colData.top_values).map(([val, count]) => `${val} (${count})`).join(', ')}</p>` : (typeof colData.top_values === 'string' ? `<p>Top Values: ${colData.top_values}</p>` : 'N/A')}
+                `;
+                columnInfoGrid.appendChild(colDiv);
+            });
+        } else if (!info.column_info) {
+            datasetInfoDiv.innerHTML += '<p class="error-message">Column information is not available.</p>';
+        }
+    } else {
+        datasetInfoDiv.innerHTML = '<p class="error-message">Dataset information not available or incomplete. Please upload a file and try again.</p>';
+    }
+}
+
+function displayDashboard(dashboardUrl) {
             const dashboardContentDiv = document.getElementById('dashboard-content');
-            dashboardContentDiv.innerHTML = '';
+            dashboardContentDiv.innerHTML = ''; // Clear existing content
 
             const iframe = document.createElement('iframe');
             iframe.src = dashboardUrl;
             iframe.style.width = '100%';
             iframe.style.height = '100%';
             iframe.style.border = 'none';
-            iframe.style.minHeight = '600px';
+            iframe.style.minHeight = '600px'; // Ensure visibility
             iframe.setAttribute('loading', 'lazy');
             iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
 
             dashboardContentDiv.appendChild(iframe);
-            displaySection('dashboard-display-section');
-        }
 
-        // Display dataset info
-        function displayDatasetInfo(info) {
-            state.datasetInfo = info;
-            const datasetInfoDiv = document.getElementById('dataset-info');
-            if (!datasetInfoDiv) {
-                console.error("Error: dataset-info element not found!");
-                return;
-            }
+            displaySection('dashboard-display-section'); // Show the dashboard section
 
-            datasetInfoDiv.innerHTML = '';
-
-            if (info && info.filename) {
-                datasetInfoDiv.innerHTML += `
-                    <h4>Dataset Summary:</h4>
-                    <p><strong>File Name:</strong> ${info.filename}</p>
-                    <p><strong>Rows:</strong> ${info.rows}</p>
-                    <p><strong>Columns:</strong> ${info.columns}</p>
-                    <p><strong>Missing Values:</strong> ${info.missing_values}</p>
-                    <p><strong>Duplicate Rows:</strong> ${info.duplicate_rows}</p>
-                    <p><strong>Data Quality Score:</strong> ${info.data_quality_score}</p>
-                    <h4>Column Information:</h4>
-                    <div class="column-info-grid"></div>
-                `;
-
-                const columnInfoGrid = datasetInfoDiv.querySelector('.column-info-grid');
-                if (columnInfoGrid && info.column_info) {
-                    columnInfoGrid.innerHTML = '';
-                    info.column_info.forEach(colData => {
-                        const colDiv = document.createElement('div');
-                        colDiv.classList.add('column-card');
-                        colDiv.innerHTML = `
-                            <h5>${colData.name}</h5>
-                            <p>Dtype: ${colData.dtype || 'N/A'}</p>
-                            <p>Unique: ${colData.unique_values !== undefined ? colData.unique_values : 'N/A'}</p>
-                            <p>Missing: ${colData.missing_count !== undefined ? colData.missing_count : 'N/A'} (${colData.missing_percentage !== undefined && colData.missing_percentage !== null ? parseFloat(colData.missing_percentage).toFixed(2) : 0}%)</p>
-                            <p>Subtype: ${colData.subtype || 'N/A'}</p>
-                            ${colData.min !== undefined && colData.max !== undefined ? `<p>Range: ${colData.min} - ${colData.max}</p>` : ''}
-                            ${colData.mean !== undefined ? `<p>Mean: ${parseFloat(colData.mean).toFixed(2)}</p>` : ''}
-                            ${colData.std !== undefined ? `<p>Std Dev: ${parseFloat(colData.std).toFixed(2)}</p>` : ''}
-                            ${colData.top_values && typeof colData.top_values === 'object' ? `<p>Top Values: ${Object.entries(colData.top_values).map(([val, count]) => `${val} (${count})`).join(', ')}</p>` : (typeof colData.top_values === 'string' ? `<p>Top Values: ${colData.top_values}</p>` : '')}
-                        `;
-                        columnInfoGrid.appendChild(colDiv);
-                    });
-                } else if (!info.column_info) {
-                    datasetInfoDiv.innerHTML += '<p class="error-message">Column information is not available.</p>';
-                }
-            } else {
-                datasetInfoDiv.innerHTML = '<p class="error-message">Dataset information not available or incomplete. Please upload a file and try again.</p>';
+            // Optional: Hide the default "Dashboard will be displayed here..." message
+            const defaultMessage = dashboardContentDiv.querySelector('p');
+            if (defaultMessage) {
+                defaultMessage.classList.add('hidden');
             }
         }
 
-        // Process chat messages
+
+        // Function to process chat messages with the backend (Gemini)
         async function processChat(message) {
-            displayMessage(message, 'user');
-            document.getElementById('chat-input').value = '';
-            
-            const datasetId = state.activeDatasetId;
+            const chatForm = document.getElementById('chat-input-form');
+            const chatInput = document.getElementById('chat-input');
+            displayMessage(message, 'user'); // Display user message
+            chatInput.value = ''; // Clear input
+            const datasetId = state.activeDatasetId; // Get the active dataset ID from your state
+
             if (!datasetId) {
                 displayStatusMessage('Error: No active dataset selected for chat.', 'error');
-                return;
+                showLoadingSpinner(false);
+                return; // Exit if no dataset ID
             }
 
             showLoadingSpinner(true);
@@ -1078,6 +653,7 @@
                             parts: [{ function_call: data.function_call }]
                         });
                         sessionStorage.setItem('chat_history', JSON.stringify(currentChatHistory));
+
                         await executeTool(data.function_call.name, data.function_call.args);
                     } else if (data.response) {
                         displayMessage(data.response, 'system');
@@ -1093,13 +669,13 @@
                 }
             } catch (error) {
                 console.error('Chat communication error:', error);
-                displayMessage(`Chat communication error: ${error.message}`, 'system');
+                displayMessage(`Chat communication error: ${error.message}. Please check server logs.`, 'system');
                 displayStatusMessage(`Chat communication error: ${error.message}`, 'error');
                 showLoadingSpinner(false);
             }
         }
 
-        // Execute tool calls
+        // Function to execute tool calls (from AI)
         async function executeTool(toolName, toolArgs) {
             showLoadingSpinner(true);
             try {
@@ -1135,47 +711,28 @@
 
                     await sendToolOutputToAI(toolName, data);
 
+                    // If a tool output updates dataset info, refresh the display
                     if (data.df_info) {
                         state.datasetInfo = data.df_info;
                         displayDatasetInfo(state.datasetInfo);
                         displayStatusMessage('Dataset info updated after tool execution.', 'info');
                     }
-                    
-                    // Handle visualizations - add to dynamic graphs section
                     if (data.image_base64) {
-                        // Extract title from tool args if available
-                        let graphTitle = 'Custom Visualization';
-                        if (toolArgs && toolArgs.title) {
-                            graphTitle = toolArgs.title;
-                        } else if (toolArgs && toolArgs.chart_type) {
-                            graphTitle = `${toolArgs.chart_type.charAt(0).toUpperCase() + toolArgs.chart_type.slice(1)} Chart`;
-                        } else if (toolName === 'create_visualization') {
-                            graphTitle = 'Data Visualization';
-                        }
-                        
-                        const graphId = addDynamicGraph(data.image_base64, graphTitle);
-                        displayMessage(`📊 Visualization added to custom graphs section!`, 'system');
-                        
-                        // Also show in main dashboard if it's empty
-                        const dashboardContent = document.getElementById('dashboard-content');
-                        const hasMainDashboard = dashboardContent && !dashboardContent.querySelector('p.error-message');
-                        
-                        if (!hasMainDashboard) {
-                            const img = document.createElement('img');
-                            img.src = `data:image/png;base64,${data.image_base64}`;
-                            img.alt = 'Generated Visualization';
-                            img.style.maxWidth = '100%';
-                            img.style.height = 'auto';
-                            dashboardContent.innerHTML = '';
-                            dashboardContent.appendChild(img);
-                            displaySection('dashboard-display-section');
-                        }
-                        
+                        const img = document.createElement('img');
+                        img.src = `data:image/png;base64,${data.image_base64}`;
+                        img.alt = 'Generated Visualization';
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                        document.getElementById('dashboard-content').innerHTML = ''; // Clear previous
+                        document.getElementById('dashboard-content').appendChild(img);
+                        displayMessage('Visualization displayed in dashboard!', 'system');
+                        displaySection('dashboard-display-section');
                     } else if (data.dashboard_config) {
                         document.getElementById('dashboard-content').textContent = JSON.stringify(data.dashboard_config, null, 2);
                         displayMessage('Dashboard config displayed!', 'system');
                         displaySection('dashboard-display-section');
                     }
+
                 } else {
                     displayMessage(`Error executing tool ${toolName}: ${data.error || 'Unknown error'}`, 'system');
                     displayStatusMessage(`Tool Error: ${data.error || 'Unknown error'}`, 'error');
@@ -1188,7 +745,7 @@
             }
         }
 
-        // Send tool output back to AI
+        // Send tool output back to the AI for further reasoning
         async function sendToolOutputToAI(toolName, toolOutput) {
             showLoadingSpinner(true);
             try {
@@ -1225,171 +782,35 @@
             }
         }
 
-        // Initialize event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            // Single file upload
-            const fileInput = document.getElementById('file-input');
-            const fileDropArea = document.getElementById('file-drop-area');
+        // Event listener for chat form submission
+        const chatForm = document.getElementById('chat-input-form');
+        const chatInput = document.getElementById('chat-input');
+        if (chatForm && chatInput) {
+            chatForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const message = chatInput.value.trim();
 
-            if (fileInput) {
-                fileInput.addEventListener('change', async (event) => {
-                    const file = event.target.files[0];
-                    if (file) {
-                        const formData = new FormData();
-                        formData.append('file', file);
-                        showLoadingSpinner(true);
-                        displayStatusMessage('Uploading file...', 'info');
-                        displaySection('auto-process-status');
-
-                        try {
-                            const response = await fetch('/upload', {
-                                method: 'POST',
-                                body: formData
-                            });
-                            const data = await response.json();
-
-                            if (response.ok) {
-                                displayStatusMessage(`File "${file.name}" uploaded and processed!`, 'success');
-                                state.datasetInfo = data.df_info;
-                                state.activeDatasetId = data.dataset_id;
-                                displayMessage(`File "${file.name}" uploaded successfully! Dataset ID: ${data.dataset_id}`, 'system');
-                                displayMessage('💡 Now you can ask for custom visualizations! Try "Show me a bar chart of sales by category" or "Create a scatter plot"', 'system');
-
-                                displayDatasetInfo(state.datasetInfo);
-
-                                if (data.dashboard_url) {
-                                    displayDashboard(data.dashboard_url);
-                                    displayMessage('Dashboard generated and loaded successfully!', 'system');
-                                } else if (data.dashboard_config) {
-                                    document.getElementById('dashboard-content').textContent = JSON.stringify(data.dashboard_config, null, 2);
-                                    displayMessage('Dashboard configuration received.', 'system');
-                                } else if (data.image_base64) {
-                                    const img = document.createElement('img');
-                                    img.src = `data:image/png;base64,${data.image_base64}`;
-                                    img.alt = 'Generated Visualization';
-                                    img.style.maxWidth = '100%';
-                                    img.style.height = 'auto';
-                                    document.getElementById('dashboard-content').innerHTML = '';
-                                    document.getElementById('dashboard-content').appendChild(img);
-                                    displayMessage('Visualization generated successfully!', 'system');
-                                } else {
-                                    document.getElementById('dashboard-content').innerHTML = '<p class="error-message">No dashboard or visualization was generated automatically. You can chat with the AI to generate one.</p>';
-                                    displayMessage('Automatic dashboard generation failed. Please chat with the AI for help.', 'system');
-                                }
-                                displaySection('dashboard-display-section');
-
-                            } else {
-                                displayStatusMessage(`Upload/Processing failed: ${data.error}`, 'error');
-                                displayMessage(`Upload/Processing failed: ${data.error}`, 'system');
-                                displaySection('upload-section');
-                            }
-                        } catch (error) {
-                            console.error('Upload failed:', error);
-                            displayStatusMessage(`Network error during upload: ${error.message}`, 'error');
-                            displayMessage(`Network error during upload: ${error.message}`, 'system');
-                            displaySection('upload-section');
-                        } finally {
-                            showLoadingSpinner(false);
-                        }
+                if (message) {
+                    if (!state.activeDatasetId) {
+                        displayStatusMessage('Please upload a dataset first before chatting with the AI.', 'warning');
+                        displayMessage('Please upload a dataset first before chatting with the AI.', 'system');
+                        chatInput.value = '';
+                        return;
                     }
-                });
-            }
+                    await processChat(message);
+                }
+            });
+        } else {
+            console.error("Chat form or chat input not found in HTML!");
+        }
 
-            if (fileDropArea) {
-                fileDropArea.addEventListener('dragover', (event) => {
-                    event.preventDefault();
-                    fileDropArea.style.borderColor = '#2563eb';
-                    fileDropArea.style.backgroundColor = '#eff6ff';
-                });
-
-                fileDropArea.addEventListener('dragleave', () => {
-                    fileDropArea.style.borderColor = '#93c5fd';
-                    fileDropArea.style.backgroundColor = 'white';
-                });
-
-                fileDropArea.addEventListener('drop', (event) => {
-                    event.preventDefault();
-                    fileDropArea.style.borderColor = '#93c5fd';
-                    fileDropArea.style.backgroundColor = 'white';
-                    const file = event.dataTransfer.files[0];
-                    if (file) {
-                        fileInput.files = event.dataTransfer.files;
-                        fileInput.dispatchEvent(new Event('change'));
-                    }
-                });
-            }
-
-            // Multi file upload
-            const multiFileInput = document.getElementById('multi-file-input');
-            const multiFileDropArea = document.getElementById('multi-file-drop-area');
-            
-            if (multiFileInput) {
-                multiFileInput.addEventListener('change', function(event) {
-                    const files = Array.from(event.target.files);
-                    selectedFiles = files.filter(file => file.name.toLowerCase().endsWith('.csv'));
-                    
-                    if (selectedFiles.length !== files.length) {
-                        displayStatusMessage('⚠️ Only CSV files are supported for multi-file upload', 'warning');
-                    }
-                    
-                    updateMultiFilesList();
-                });
-            }
-            
-            if (multiFileDropArea) {
-                multiFileDropArea.addEventListener('dragover', function(event) {
-                    event.preventDefault();
-                    multiFileDropArea.style.borderColor = '#2563eb';
-                    multiFileDropArea.style.backgroundColor = '#eff6ff';
-                });
-                
-                multiFileDropArea.addEventListener('dragleave', function() {
-                    multiFileDropArea.style.borderColor = '#93c5fd';
-                    multiFileDropArea.style.backgroundColor = 'white';
-                });
-                
-                multiFileDropArea.addEventListener('drop', function(event) {
-                    event.preventDefault();
-                    multiFileDropArea.style.borderColor = '#93c5fd';
-                    multiFileDropArea.style.backgroundColor = 'white';
-                    
-                    const files = Array.from(event.dataTransfer.files);
-                    selectedFiles = files.filter(file => file.name.toLowerCase().endsWith('.csv'));
-                    
-                    if (selectedFiles.length !== files.length) {
-                        displayStatusMessage('⚠️ Only CSV files are supported for multi-file upload', 'warning');
-                    }
-                    
-                    updateMultiFilesList();
-                });
-            }
-
-            // Chat form
-            const chatForm = document.getElementById('chat-input-form');
-            const chatInput = document.getElementById('chat-input');
-            if (chatForm && chatInput) {
-                chatForm.addEventListener('submit', async (event) => {
-                    event.preventDefault();
-                    const message = chatInput.value.trim();
-
-                    if (message) {
-                        if (!state.activeDatasetId) {
-                            displayStatusMessage('Please upload a dataset first before chatting with the AI.', 'warning');
-                            displayMessage('Please upload a dataset first before chatting with the AI.', 'system');
-                            chatInput.value = '';
-                            return;
-                        }
-                        await processChat(message);
-                    }
-                });
-            }
-
-            // Initialize
-            displaySection('upload-section');
+        // Initialize with the upload section when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            displaySection('upload-section'); // Start with the upload section
             displayMessage('Hello! Please upload a CSV file to begin.', 'system');
             sessionStorage.removeItem('chat_history');
 
-            // Restore chat history
+            // Restore chat history from session storage on load
             const savedChatHistory = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
             if (savedChatHistory.length > 0) {
                 savedChatHistory.forEach(chatItem => {
