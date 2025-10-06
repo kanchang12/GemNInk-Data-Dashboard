@@ -572,7 +572,7 @@ def upload_file():
         if perplexity_client:
             try:
                 response = perplexity_client.chat.completions.create(
-                    model="sonar-small-online",
+                    model="sonar-deep-research",
                     messages=[{
                         "role": "user",
                         "content": f"Provide a 100-word summary of this dataset analysis:\n{json.dumps(all_insights, indent=2)}"
@@ -876,6 +876,7 @@ def health_check():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
 
 
 
