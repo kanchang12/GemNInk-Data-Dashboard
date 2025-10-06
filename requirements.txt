@@ -7,3 +7,6 @@ werkzeug
 flask-session
 plotly
 python-dotenv
+gunicorn
+openpyxl
+xlrd
