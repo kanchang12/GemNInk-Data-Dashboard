@@ -123,48 +123,20 @@ def init_database():
     finally:
         cur.close()
         return_db_connection(conn)
-def create_default_user():
-    """Create default admin user if no users exist"""
-    conn = get_db_connection()
-    if not conn:
-        return
-    
-    try:
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM users")
-        count = cur.fetchone()[0]
-        
-        if count == 0:
-            hashed = generate_password_hash('admin123', method='pbkdf2:sha256')
-            cur.execute(
-                "INSERT INTO users (username, password) VALUES (%s, %s)",
-                ('admin', hashed)
-            )
-            conn.commit()
-            print("Default user created - Username: admin, Password: admin123")
-        
-        cur.close()
-    except Exception as e:
-        conn.rollback()
-        print(f"Error creating default user: {e}")
-    finally:
-        return_db_connection(conn)
+
 # Initialize database on startup
 init_database()
-create_default_user()
-# --- Perplexity AI Configuration ---
-PERPLEXITY_API_KEY = os.getenv('PERPLEXITY_API_KEY')
 
-# Initialize OpenAI client for Perplexity
-perplexity_client = None
-if PERPLEXITY_API_KEY:
-    perplexity_client = openai.OpenAI(
-        api_key=PERPLEXITY_API_KEY,
-        base_url="https://api.perplexity.ai"
-    )
-    print("Perplexity API client initialized successfully!")
+# --- OpenAI Configuration ---
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+# Initialize OpenAI client
+openai_client = None
+if OPENAI_API_KEY:
+    openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    print("OpenAI API client initialized successfully!")
 else:
-    print("PERPLEXITY_API_KEY not set. AI features will be unavailable.")
+    print("OPENAI_API_KEY not set. AI features will be unavailable.")
 
 # Define tools for function calling
 TOOLS = [
@@ -569,24 +541,26 @@ def upload_file():
         ai_summary = "AI summary unavailable"
         dashboard_explanation = "Data insights visualization"
         
-        if perplexity_client:
+        if openai_client:
             try:
-                response = perplexity_client.chat.completions.create(
-                    model="sonar-deep-research",
+                response = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
                     messages=[{
                         "role": "user",
                         "content": f"Provide a 100-word summary of this dataset analysis:\n{json.dumps(all_insights, indent=2)}"
-                    }]
+                    }],
+                    max_tokens=200
                 )
                 ai_summary = response.choices[0].message.content
                 
                 # Get explanation
-                expl_response = perplexity_client.chat.completions.create(
-                    model="llama-3.1-sonar-small-128k-online",
+                expl_response = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
                     messages=[{
                         "role": "user",
                         "content": f"In ONE sentence (max 15 words), what is this dataset about?\nFile: {filename}\nColumns: {list(cleaned_df.columns)}"
-                    }]
+                    }],
+                    max_tokens=50
                 )
                 dashboard_explanation = expl_response.choices[0].message.content.strip()[:100]
             except Exception as e:
@@ -686,9 +660,9 @@ Respond in max 20 words. Use function calls when needed."""
         
         messages.append({"role": "user", "content": f"{data_info}\n\n{user_message}"})
         
-        # Call Perplexity
-        response = perplexity_client.chat.completions.create(
-            model="llama-3.1-sonar-small-128k-online",
+        # Call OpenAI
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
             messages=messages,
             tools=TOOLS,
             tool_choice="auto"
@@ -727,8 +701,8 @@ Respond in max 20 words. Use function calls when needed."""
                     "content": json.dumps(result)
                 })
                 
-                follow_up = perplexity_client.chat.completions.create(
-                    model="llama-3.1-sonar-small-128k-online",
+                follow_up = openai_client.chat.completions.create(
+                    model="gpt-4o-mini",
                     messages=messages
                 )
                 ai_response_text += "\n" + (follow_up.choices[0].message.content or "")
@@ -868,7 +842,7 @@ def health_check():
         'status': 'healthy',
         'timestamp': datetime.now().isoformat(),
         'services': {
-            'perplexity_api': perplexity_client is not None,
+            'openai_api': openai_client is not None,
             'postgresql': db_pool is not None
         }
     })
@@ -876,7 +850,3 @@ def health_check():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
-
-
-
-
