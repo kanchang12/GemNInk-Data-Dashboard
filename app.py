@@ -123,7 +123,32 @@ def init_database():
     finally:
         cur.close()
         return_db_connection(conn)
-
+def create_default_user():
+    """Create default admin user if no users exist"""
+    conn = get_db_connection()
+    if not conn:
+        return
+    
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM users")
+        count = cur.fetchone()[0]
+        
+        if count == 0:
+            hashed = generate_password_hash('admin123', method='pbkdf2:sha256')
+            cur.execute(
+                "INSERT INTO users (username, password) VALUES (%s, %s)",
+                ('admin', hashed)
+            )
+            conn.commit()
+            print("Default user created - Username: admin, Password: admin123")
+        
+        cur.close()
+    except Exception as e:
+        conn.rollback()
+        print(f"Error creating default user: {e}")
+    finally:
+        return_db_connection(conn)
 # Initialize database on startup
 init_database()
 create_default_user()
@@ -483,32 +508,7 @@ def create_chart_from_function_call(df, args):
     
     except Exception as e:
         return f"<p style='color: red;'>Error: {str(e)}</p>"
-def create_default_user():
-    """Create default admin user if no users exist"""
-    conn = get_db_connection()
-    if not conn:
-        return
-    
-    try:
-        cur = conn.cursor()
-        cur.execute("SELECT COUNT(*) FROM users")
-        count = cur.fetchone()[0]
-        
-        if count == 0:
-            hashed = generate_password_hash('admin123', method='pbkdf2:sha256')
-            cur.execute(
-                "INSERT INTO users (username, password) VALUES (%s, %s)",
-                ('admin', hashed)
-            )
-            conn.commit()
-            print("Default user created - Username: admin, Password: admin123")
-        
-        cur.close()
-    except Exception as e:
-        conn.rollback()
-        print(f"Error creating default user: {e}")
-    finally:
-        return_db_connection(conn)
+
 # --- Routes ---
 
 @app.route('/')
@@ -876,4 +876,5 @@ def health_check():
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
+
 
