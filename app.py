@@ -16,6 +16,10 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from psycopg2.pool import SimpleConnectionPool
 import openai
+from sqlalchemy import create_engine, Column, Integer, String, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import scoped_session, sessionmaker
+from flask_session import Session
 
 load_dotenv()
 
@@ -29,19 +33,25 @@ import plotly.graph_objects as go
 
 app = Flask(__name__)
 app.config['APPLICATION_NAME'] = 'GemNInk'
-app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', os.urandom(24))
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
-app.config['SESSION_USE_SIGNER'] = True
 
-from flask_session import Session
+# --- Session Configuration with PostgreSQL ---
+DATABASE_URL = "postgres://koyeb-adm:npg_6fcBpeKIWtq5@ep-raspy-morning-a2q7q3op.eu-central-1.pg.koyeb.app/koyebdb"
+
+# Create SQLAlchemy engine for sessions
+engine = create_engine(DATABASE_URL.replace('postgres://', 'postgresql://'))
+Base = declarative_base()
+
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'change-this-to-random-secret-key-12345')
+app.config['SESSION_TYPE'] = 'sqlalchemy'
+app.config['SESSION_SQLALCHEMY'] = engine
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
+app.config['SESSION_USE_SIGNER'] = True
+app.config['SESSION_SQLALCHEMY_TABLE'] = 'sessions'
+
 Session(app)
 
 # --- PostgreSQL Configuration ---
-DATABASE_URL = "postgres://koyeb-adm:npg_6fcBpeKIWtq5@ep-raspy-morning-a2q7q3op.eu-central-1.pg.koyeb.app/koyebdb"
-
-# Create connection pool
 db_pool = None
 try:
     db_pool = SimpleConnectionPool(1, 20, DATABASE_URL)
@@ -71,6 +81,16 @@ def init_database():
     try:
         cur = conn.cursor()
         
+        # Create sessions table for Flask-Session
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS sessions (
+                id SERIAL PRIMARY KEY,
+                session_id VARCHAR(255) UNIQUE NOT NULL,
+                data BYTEA,
+                expiry TIMESTAMP
+            )
+        """)
+        
         # Create users table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
@@ -98,7 +118,7 @@ def init_database():
             )
         """)
         
-        # Create datasets table (optional - for persistence)
+        # Create datasets table
         cur.execute("""
             CREATE TABLE IF NOT EXISTS datasets (
                 id SERIAL PRIMARY KEY,
@@ -124,13 +144,40 @@ def init_database():
         cur.close()
         return_db_connection(conn)
 
+def create_default_user():
+    """Create default admin user if no users exist"""
+    conn = get_db_connection()
+    if not conn:
+        return
+    
+    try:
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM users")
+        count = cur.fetchone()[0]
+        
+        if count == 0:
+            hashed = generate_password_hash('admin123', method='pbkdf2:sha256')
+            cur.execute(
+                "INSERT INTO users (username, password) VALUES (%s, %s)",
+                ('admin', hashed)
+            )
+            conn.commit()
+            print("Default user created - Username: admin, Password: admin123")
+        
+        cur.close()
+    except Exception as e:
+        conn.rollback()
+        print(f"Error creating default user: {e}")
+    finally:
+        return_db_connection(conn)
+
 # Initialize database on startup
 init_database()
+create_default_user()
 
 # --- OpenAI Configuration ---
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-# Initialize OpenAI client
 openai_client = None
 if OPENAI_API_KEY:
     openai_client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -416,7 +463,6 @@ def read_complex_file(file_stream, filename):
         
         df.replace(['', 'NA', 'N/A', 'NaN', 'null'], np.nan, inplace=True)
         
-        # Handle problematic columns
         for col in df.columns:
             try:
                 df[col].to_json()
@@ -507,7 +553,6 @@ def upload_file():
         if df.empty:
             return jsonify({'error': 'File is empty'}), 400
         
-        # Automated cleaning
         initial_rows = df.shape[0]
         initial_missing = df.isnull().sum().sum()
         
@@ -524,7 +569,6 @@ def upload_file():
         missing_after = cleaned_df.isnull().sum().sum()
         cleaning_message = f"Cleaned: {initial_rows:,}→{rows_after:,} rows, {initial_missing:,}→{missing_after:,} missing values"
         
-        # Generate insights
         overall_summary = data_analysis.get_overall_summary(cleaned_df)
         numerical_analysis = data_analysis.analyze_numerical_data(cleaned_df)
         categorical_analysis = data_analysis.analyze_categorical_data(cleaned_df)
@@ -537,9 +581,8 @@ def upload_file():
             "correlations": correlation_analysis
         }
         
-        # AI summary
-        ai_summary = "AI summary unavailable"
-        dashboard_explanation = "Data insights visualization"
+        ai_summary = "Dataset uploaded and cleaned successfully"
+        dashboard_explanation = f"Analysis of {filename}"
         
         if openai_client:
             try:
@@ -553,7 +596,6 @@ def upload_file():
                 )
                 ai_summary = response.choices[0].message.content
                 
-                # Get explanation
                 expl_response = openai_client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[{
@@ -568,7 +610,6 @@ def upload_file():
         
         all_insights['dashboard_explanation'] = dashboard_explanation
         
-        # Generate dashboard
         dashboard_html = data_visualization.generate_dashboard_html(cleaned_df, all_insights)
         dashboard_filename = f"dashboard_{uuid.uuid4().hex}.html"
         dashboard_path = os.path.join(app.root_path, 'static', 'dashboards', dashboard_filename)
@@ -579,7 +620,6 @@ def upload_file():
         
         dashboard_url = url_for('static', filename=f'dashboards/{dashboard_filename}')
         
-        # Store in session
         dataset_id = str(uuid.uuid4())
         session[dataset_id] = {
             'df': cleaned_df.to_dict('records'),
@@ -590,8 +630,8 @@ def upload_file():
             'initial_insights': all_insights
         }
         session['active_dataset_id'] = dataset_id
+        session.modified = True
         
-        # Log to PostgreSQL
         conn = get_db_connection()
         if conn:
             try:
@@ -643,7 +683,6 @@ def chat(dataset_id):
         df = pd.DataFrame(session[dataset_id]['df'])
         chat_history = session[dataset_id].get('chat_history', [])
         
-        # Build context
         data_info = f"""Dataset: {len(df)} rows, {len(df.columns)} columns
 Columns: {', '.join(df.columns.tolist())}
 Types: {df.dtypes.to_dict()}
@@ -651,16 +690,13 @@ Sample: {get_sample_for_ai(df, 5)}
 
 Respond in max 20 words. Use function calls when needed."""
         
-        # Build messages
         messages = [{"role": "system", "content": "You are a data analyst assistant. Keep responses under 20 words."}]
         
-        # Add history
-        for msg in chat_history[-10:]:  # Last 10 messages
+        for msg in chat_history[-10:]:
             messages.append(msg)
         
         messages.append({"role": "user", "content": f"{data_info}\n\n{user_message}"})
         
-        # Call OpenAI
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=messages,
@@ -673,7 +709,6 @@ Respond in max 20 words. Use function calls when needed."""
         function_results = []
         updated_df_data = df.to_dict('records')
         
-        # Handle tool calls
         if ai_response.tool_calls:
             for tool_call in ai_response.tool_calls:
                 func_name = tool_call.function.name
@@ -686,6 +721,7 @@ Respond in max 20 words. Use function calls when needed."""
                     session[dataset_id]['df'] = updated_df_data
                     session[dataset_id]['info'] = get_df_info(pd.DataFrame(updated_df_data), 
                                                                session[dataset_id]['info'].get('filename', 'Unknown'))
+                    session.modified = True
                 
                 function_results.append({
                     'function': func_name,
@@ -693,8 +729,7 @@ Respond in max 20 words. Use function calls when needed."""
                     'result': result
                 })
                 
-                # Get follow-up response
-                messages.append({"role": "assistant", "content": ai_response_text, "tool_calls": [tool_call.dict()]})
+                messages.append({"role": "assistant", "content": ai_response_text, "tool_calls": [tool_call.model_dump()]})
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tool_call.id,
@@ -709,15 +744,14 @@ Respond in max 20 words. Use function calls when needed."""
         
         complete_response = ai_response_text
         
-        # Add visualization HTML
         for func_result in function_results:
             if func_result['function'] == 'create_visualization' and func_result['result'].get('chart_html'):
                 complete_response += f"\n\n{func_result['result']['chart_html']}"
         
-        # Update history
         chat_history.append({"role": "user", "content": user_message})
         chat_history.append({"role": "assistant", "content": complete_response})
         session[dataset_id]['chat_history'] = chat_history
+        session.modified = True
         
         return jsonify({
             "response": complete_response,
@@ -744,8 +778,10 @@ def login():
                 cur.close()
                 
                 if user and check_password_hash(user['password'], password):
+                    session.clear()
                     session['logged_in'] = True
                     session['username'] = username
+                    session.modified = True
                     flash('Logged in successfully!', 'success')
                     return redirect(url_for('index'))
                 else:
@@ -849,4 +885,4 @@ def health_check():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
