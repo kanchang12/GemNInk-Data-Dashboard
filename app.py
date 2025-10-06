@@ -16,9 +16,6 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from psycopg2.pool import SimpleConnectionPool
 import openai
-from sqlalchemy import create_engine, Column, Integer, String, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import scoped_session, sessionmaker
 from flask_session import Session
 
 load_dotenv()
@@ -37,13 +34,10 @@ app.config['APPLICATION_NAME'] = 'GemNInk'
 # --- Session Configuration with PostgreSQL ---
 DATABASE_URL = "postgres://koyeb-adm:npg_6fcBpeKIWtq5@ep-raspy-morning-a2q7q3op.eu-central-1.pg.koyeb.app/koyebdb"
 
-# Create SQLAlchemy engine for sessions
-engine = create_engine(DATABASE_URL.replace('postgres://', 'postgresql://'))
-Base = declarative_base()
-
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'change-this-to-random-secret-key-12345')
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL.replace('postgres://', 'postgresql://')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SESSION_TYPE'] = 'sqlalchemy'
-app.config['SESSION_SQLALCHEMY'] = engine
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 app.config['SESSION_USE_SIGNER'] = True
