@@ -10,3 +10,7 @@ python-dotenv
 gunicorn
 openpyxl
 xlrd
+scipy
+scikit-learn
+matplotlib
+seaborn
