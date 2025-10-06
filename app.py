@@ -31,17 +31,14 @@ import plotly.graph_objects as go
 app = Flask(__name__)
 app.config['APPLICATION_NAME'] = 'GemNInk'
 
-# --- Session Configuration with PostgreSQL ---
+# --- Session Configuration ---
 DATABASE_URL = "postgres://koyeb-adm:npg_6fcBpeKIWtq5@ep-raspy-morning-a2q7q3op.eu-central-1.pg.koyeb.app/koyebdb"
 
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'change-this-to-random-secret-key-12345')
-app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL.replace('postgres://', 'postgresql://')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_TYPE'] = 'sqlalchemy'
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = '/tmp/flask_session'
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_SQLALCHEMY_TABLE'] = 'sessions'
 
 Session(app)
 
@@ -389,7 +386,7 @@ def execute_tool_call(tool_name, tool_args, df):
             return {"status": "success", "result": result}
         
         elif tool_name == "analyze_categorical_data":
-            result = data_analysis.analyze_categorical_data(df, columns=tool_args.get('columns'))
+            result = data_analysis.analyze_categorical_data(df)
             return {"status": "success", "result": result}
         
         elif tool_name == "perform_correlation_analysis":
